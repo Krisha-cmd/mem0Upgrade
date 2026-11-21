@@ -1,0 +1,51 @@
+# Global defaults. Overridden by: experiments/<E>.yaml -> profiles/<profile>.yaml -> CLI dotlist.
+seed: 13
+paths:
+  prefeval_root: data/raw/prefeval_src
+  personamem_root: data/raw/personamem
+  locomo_path: data/raw/locomo/locomo10.json
+  processed: data/processed
+  raw_results: results/raw
+  tables: results/tables
+  figures: results/figures
+  tuning: results/tuning
+  jobs: results/jobs
+  cache: cache
+  models_ft: models_ft
+data:
+  n_levels: [1, 5, 10, 25, 50, 100]
+  main_n: 25
+  null_frac: 0.2
+  global_prob: 0.3
+  filler_per_pref: 3
+  n_folds: 5
+  sub_n_pos: 500          # E3 positives per N level
+  form: explicit          # explicit | choice | persona (E8)
+  pref_ack: "Got it, I'll keep that in mind."   # D-011
+prompt:
+  system: "You are a helpful assistant."
+  memory_header: "User preferences:"
+generation: {temperature: 0.0, max_tokens: 512, seed: 0}
+judge_generation: {temperature: 0.0, max_tokens: 256, seed: 0}
+gate:
+  k_max: 10
+  rerank_top: 20
+  tau_quantiles: 101
+  k_grid: [1, 2, 3, 5, 7, 10]
+s3_train: {epochs: 1, lr: 2.0e-5, batch_size: 32, hard_neg: 3, rand_neg: 3, max_train_pairs: null}
+tokens:
+  counter: hf            # hf (backbone tokenizer, chat template) | whitespace | path/to/tokenizer.json
+write_amortise_queries: 100   # D-014
+llm_backend: vllm        # vllm | fake
+model: qwen7b
+scope_writer: null       # null => same as backbone
+judge: judge_qwen72b_awq
+embedder: bge_base
+xenc: bge_reranker
+exp_suffix: ""
+run:
+  shard: 0
+  num_shards: 1
+  limit: null            # cap instances (smoke/local)
+  batch_size: 256
+  n_levels: null         # override data.n_levels for this run

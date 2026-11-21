@@ -1,0 +1,6 @@
+id: S2_scope_xenc
+gate: scope_xenc
+fields: [scope, examples]
+tau: tune
+use_always_on: true
+k_max: 10

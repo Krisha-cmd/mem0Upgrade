@@ -1,0 +1,78 @@
+[
+ {
+  "preference": "I only use Apple devices and won't switch to Android.",
+  "question": "Which smartwatch should I buy?",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: Which smartwatch should I buy?",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "Which smartwatch should I buy?",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I only use Apple devices and won't switch to Android.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ },
+ {
+  "preference": "I refuse to buy anything with a subscription fee.",
+  "question": "Recommend software for editing photos.",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: Recommend software for editing photos.",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "Recommend software for editing photos.",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I refuse to buy anything with a subscription fee.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ },
+ {
+  "preference": "I need gadgets that are repairable.",
+  "question": "What laptop should I get for university?",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: What laptop should I get for university?",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "What laptop should I get for university?",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I need gadgets that are repairable.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ },
+ {
+  "preference": "I avoid smart speakers for privacy reasons.",
+  "question": "How can I set up a smart home?",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: How can I set up a smart home?",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "How can I set up a smart home?",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I avoid smart speakers for privacy reasons.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ }
+]

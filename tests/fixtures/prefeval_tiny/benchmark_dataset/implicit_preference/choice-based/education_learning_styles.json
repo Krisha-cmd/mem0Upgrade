@@ -1,0 +1,78 @@
+[
+ {
+  "preference": "I learn best through hands-on projects.",
+  "question": "How should I learn Python?",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: How should I learn Python?",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "How should I learn Python?",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I learn best through hands-on projects.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ },
+ {
+  "preference": "I find video lectures boring.",
+  "question": "What's a good way to study history?",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: What's a good way to study history?",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "What's a good way to study history?",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I find video lectures boring.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ },
+ {
+  "preference": "I need material in short daily lessons.",
+  "question": "Help me learn Spanish this year.",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: Help me learn Spanish this year.",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "Help me learn Spanish this year.",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I need material in short daily lessons.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ },
+ {
+  "preference": "I prefer visual diagrams over text.",
+  "question": "Explain how to understand statistics.",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: Explain how to understand statistics.",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "Explain how to understand statistics.",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I prefer visual diagrams over text.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ }
+]

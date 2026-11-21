@@ -1,0 +1,6 @@
+id: A1_noscope_ft
+gate: scope_ft
+fields: [text]
+tau: tune
+use_always_on: false
+k_max: 10

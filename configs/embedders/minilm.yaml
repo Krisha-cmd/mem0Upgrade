@@ -1,0 +1,5 @@
+name: minilm
+type: st
+hf_id: sentence-transformers/all-MiniLM-L6-v2
+query_prefix: ""
+batch_size: 256

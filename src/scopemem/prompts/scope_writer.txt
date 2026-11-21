@@ -1,0 +1,16 @@
+# ScopeMem scope-writer prompt, version SCOPE_WRITER_V1. Changing the body changes cache keys.
+### END HEADER ###
+[prompt-id: SCOPE_WRITER_V1]
+A user has told an AI assistant the following preference:
+
+<preference_text>{preference}</preference_text>
+
+Describe WHEN this preference should affect the assistant's answers. Think about which kinds of
+future user requests it is relevant to, including requests that do not mention its topic directly
+(for example, a fear of flying matters for "plan a trip to Rome").
+
+Return ONLY a JSON object, with no other text, in exactly this schema:
+{{"preference": "<the preference restated canonically in one line>",
+ "scope": "<one sentence: the kinds of requests this preference applies to>",
+ "example_requests": ["<short request 1>", "<short request 2>", "<short request 3>"],
+ "always_on": <true if it applies to every request regardless of topic (e.g. answer style, language, length), else false>}}

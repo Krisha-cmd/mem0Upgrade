@@ -1,0 +1,22 @@
+[
+ {
+  "preference": "I only use Apple devices and won't switch to Android.",
+  "question": "Which smartwatch should I buy?",
+  "explanation": "synthetic"
+ },
+ {
+  "preference": "I refuse to buy anything with a subscription fee.",
+  "question": "Recommend software for editing photos.",
+  "explanation": "synthetic"
+ },
+ {
+  "preference": "I need gadgets that are repairable.",
+  "question": "What laptop should I get for university?",
+  "explanation": "synthetic"
+ },
+ {
+  "preference": "I avoid smart speakers for privacy reasons.",
+  "question": "How can I set up a smart home?",
+  "explanation": "synthetic"
+ }
+]

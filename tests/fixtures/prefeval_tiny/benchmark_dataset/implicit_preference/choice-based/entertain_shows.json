@@ -1,0 +1,78 @@
+[
+ {
+  "preference": "I don't watch anything with graphic violence.",
+  "question": "Recommend a series to binge this weekend.",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: Recommend a series to binge this weekend.",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "Recommend a series to binge this weekend.",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I don't watch anything with graphic violence.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ },
+ {
+  "preference": "I prefer documentaries over fiction.",
+  "question": "What should I watch on a rainy evening?",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: What should I watch on a rainy evening?",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "What should I watch on a rainy evening?",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I prefer documentaries over fiction.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ },
+ {
+  "preference": "I only watch shows with subtitles available.",
+  "question": "Suggest a foreign film.",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: Suggest a foreign film.",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "Suggest a foreign film.",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I only watch shows with subtitles available.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ },
+ {
+  "preference": "I avoid reality TV completely.",
+  "question": "What TV shows are popular right now?",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: What TV shows are popular right now?",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "What TV shows are popular right now?",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I avoid reality TV completely.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ }
+]

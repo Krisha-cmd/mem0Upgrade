@@ -1,0 +1,15 @@
+# Pilot + cost estimate (not reported). 50 instances at N=25, every condition, main backbone + judge.
+name: E0
+kind: generation
+data_set: full
+n_levels: [25]
+limit: 50
+models: [qwen7b]
+conditions: [B0_none, B1_full, B2_all, B3_sim_k5, B4_sim_rerank, B5_llm_select, S1_scope_embed, S2_scope_xenc, S3_scope_ft, UB_oracle]
+tuning_from: E1
+num_shards: 1
+judge: true
+stages:
+  - {name: gen,       kind: model, array: tasks, time: "02:00:00", cmd: "python -m scopemem.run experiment=E0 model={model} task=$TASK"}
+  - {name: judge,     kind: judge, array: 1,     time: "02:00:00", cmd: "python -m scopemem.eval.judge experiment=E0 model={model}"}
+  - {name: aggregate, kind: cpu,   array: 1,     time: "00:30:00", cmd: "python -m scopemem.aggregate experiment=E0"}

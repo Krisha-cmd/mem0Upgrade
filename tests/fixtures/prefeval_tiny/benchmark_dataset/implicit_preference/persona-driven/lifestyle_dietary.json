@@ -1,0 +1,50 @@
+[
+ {
+  "preference": "I am strictly vegan and eat no animal products.",
+  "question": "Suggest a dinner menu for my birthday party.",
+  "explanation": "synthetic",
+  "persona": "A synthetic persona",
+  "conversation": {
+   "0": {
+    "user": "By the way, I am strictly vegan and eat no animal products.",
+    "assistant": "Understood."
+   }
+  }
+ },
+ {
+  "preference": "I have a severe peanut allergy.",
+  "question": "What snacks should I pack for a hiking trip?",
+  "explanation": "synthetic",
+  "persona": "A synthetic persona",
+  "conversation": {
+   "0": {
+    "user": "By the way, I have a severe peanut allergy.",
+    "assistant": "Understood."
+   }
+  }
+ },
+ {
+  "preference": "I avoid gluten because of coeliac disease.",
+  "question": "Recommend a bakery breakfast in Paris.",
+  "explanation": "synthetic",
+  "persona": "A synthetic persona",
+  "conversation": {
+   "0": {
+    "user": "By the way, I avoid gluten because of coeliac disease.",
+    "assistant": "Understood."
+   }
+  }
+ },
+ {
+  "preference": "I don't drink alcohol at all.",
+  "question": "Plan an evening out with my colleagues.",
+  "explanation": "synthetic",
+  "persona": "A synthetic persona",
+  "conversation": {
+   "0": {
+    "user": "By the way, I don't drink alcohol at all.",
+    "assistant": "Understood."
+   }
+  }
+ }
+]

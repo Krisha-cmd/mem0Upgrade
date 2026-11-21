@@ -1,0 +1,101 @@
+[
+ {
+  "conversation_id": "tiny0",
+  "model": "synthetic",
+  "conversation": [
+   {
+    "role": "user",
+    "content": "What is the capital of Australia?"
+   },
+   {
+    "role": "assistant",
+    "content": "The capital of Australia is Canberra."
+   },
+   {
+    "role": "user",
+    "content": "How many states does it have?"
+   },
+   {
+    "role": "assistant",
+    "content": "Australia has six states and two mainland territories."
+   },
+   {
+    "role": "user",
+    "content": "Which is the largest?"
+   },
+   {
+    "role": "assistant",
+    "content": "Western Australia is the largest state by area."
+   }
+  ],
+  "turn": 3,
+  "language": "English",
+  "redacted": false
+ },
+ {
+  "conversation_id": "tiny1",
+  "model": "synthetic",
+  "conversation": [
+   {
+    "role": "user",
+    "content": "Write a haiku about autumn."
+   },
+   {
+    "role": "assistant",
+    "content": "Crisp leaves drift and fall / amber light on quiet paths / the year exhales slow."
+   },
+   {
+    "role": "user",
+    "content": "Now one about winter."
+   },
+   {
+    "role": "assistant",
+    "content": "Snow hushes the street / breath clouds in the silver dawn / the world holds its pause."
+   },
+   {
+    "role": "user",
+    "content": "Thanks, that's lovely."
+   },
+   {
+    "role": "assistant",
+    "content": "You're welcome. Happy to write more any time."
+   }
+  ],
+  "turn": 3,
+  "language": "English",
+  "redacted": false
+ },
+ {
+  "conversation_id": "tiny2",
+  "model": "synthetic",
+  "conversation": [
+   {
+    "role": "user",
+    "content": "Convert 5 miles to kilometres."
+   },
+   {
+    "role": "assistant",
+    "content": "5 miles is about 8.05 kilometres."
+   },
+   {
+    "role": "user",
+    "content": "And 10 pounds to kilograms?"
+   },
+   {
+    "role": "assistant",
+    "content": "10 pounds is about 4.54 kilograms."
+   },
+   {
+    "role": "user",
+    "content": "What about 70 Fahrenheit in Celsius?"
+   },
+   {
+    "role": "assistant",
+    "content": "70 \u00b0F is about 21.1 \u00b0C."
+   }
+  ],
+  "turn": 3,
+  "language": "English",
+  "redacted": false
+ }
+]

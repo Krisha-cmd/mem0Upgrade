@@ -1,0 +1,33 @@
+# Ten hand-written global style preferences that apply to EVERY request (section 5.2).
+# `checker` names a rule-based adherence check in scopemem.eval.global_checks; `judge` means
+# adherence is judged by the LLM judge instead.
+- id: global/0
+  text: "Please always write your answers in British English spelling (colour, organise, travelling)."
+  checker: {type: british_spelling}
+- id: global/1
+  text: "Keep every answer you give me under 150 words."
+  checker: {type: max_words, n: 150}
+- id: global/2
+  text: "Never use emojis in any of your replies to me."
+  checker: {type: no_emoji}
+- id: global/3
+  text: "Always format your answers as a bulleted list rather than paragraphs."
+  checker: {type: bullets, min_frac: 0.5}
+- id: global/4
+  text: "Don't use exclamation marks anywhere in your responses."
+  checker: {type: no_char, char: "!"}
+- id: global/5
+  text: "Always end every answer with a one-sentence summary that starts with 'In short,'."
+  checker: {type: last_line_prefix, prefix: "In short,"}
+- id: global/6
+  text: "Whenever you mention measurements in your answers, use metric units only (km, kg, Celsius)."
+  checker: {type: judge}
+- id: global/7
+  text: "Address me formally and avoid slang in all your replies."
+  checker: {type: judge}
+- id: global/8
+  text: "Start every answer with a one-line direct answer before giving any details."
+  checker: {type: judge}
+- id: global/9
+  text: "Do not use markdown headings (lines starting with #) in your answers."
+  checker: {type: no_headings}

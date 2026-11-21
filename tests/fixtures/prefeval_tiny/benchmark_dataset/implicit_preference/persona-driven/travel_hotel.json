@@ -1,0 +1,50 @@
+[
+ {
+  "preference": "I only stay in hotels with a pool.",
+  "question": "Find me accommodation in Barcelona.",
+  "explanation": "synthetic",
+  "persona": "A synthetic persona",
+  "conversation": {
+   "0": {
+    "user": "By the way, I only stay in hotels with a pool.",
+    "assistant": "Understood."
+   }
+  }
+ },
+ {
+  "preference": "I avoid big chain hotels and prefer boutique ones.",
+  "question": "Where should I stay in Lisbon?",
+  "explanation": "synthetic",
+  "persona": "A synthetic persona",
+  "conversation": {
+   "0": {
+    "user": "By the way, I avoid big chain hotels and prefer boutique ones.",
+    "assistant": "Understood."
+   }
+  }
+ },
+ {
+  "preference": "I need wheelchair-accessible rooms.",
+  "question": "Book a hotel for my conference in Berlin.",
+  "explanation": "synthetic",
+  "persona": "A synthetic persona",
+  "conversation": {
+   "0": {
+    "user": "By the way, I need wheelchair-accessible rooms.",
+    "assistant": "Understood."
+   }
+  }
+ },
+ {
+  "preference": "I refuse to stay anywhere without free breakfast.",
+  "question": "Recommend a hotel near the beach.",
+  "explanation": "synthetic",
+  "persona": "A synthetic persona",
+  "conversation": {
+   "0": {
+    "user": "By the way, I refuse to stay anywhere without free breakfast.",
+    "assistant": "Understood."
+   }
+  }
+ }
+]

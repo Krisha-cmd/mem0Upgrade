@@ -1,0 +1,22 @@
+[
+ {
+  "preference": "I am strictly vegan and eat no animal products.",
+  "question": "Suggest a dinner menu for my birthday party.",
+  "explanation": "synthetic"
+ },
+ {
+  "preference": "I have a severe peanut allergy.",
+  "question": "What snacks should I pack for a hiking trip?",
+  "explanation": "synthetic"
+ },
+ {
+  "preference": "I avoid gluten because of coeliac disease.",
+  "question": "Recommend a bakery breakfast in Paris.",
+  "explanation": "synthetic"
+ },
+ {
+  "preference": "I don't drink alcohol at all.",
+  "question": "Plan an evening out with my colleagues.",
+  "explanation": "synthetic"
+ }
+]

@@ -1,0 +1,14 @@
+# Track B: real Mem0 ingests H through a local vLLM OpenAI-compatible server.
+name: E5
+kind: mem0
+data_set: full
+n_levels: [10, 25]
+models: [qwen7b]
+conditions: [B3_mem0_native, B2_mem0_all, S_mem0_scope_S1, S_mem0_scope_S3, UB_oracle]
+mem0_k: 5
+num_shards: 12
+stages:
+  - {name: ingest,    kind: model, array: 12, time: "06:00:00", cmd: "python -m scopemem.memory.mem0_adapter experiment=E5 model={model} run.shard=$TASK run.num_shards=12"}
+  - {name: gen,       kind: model, array: tasks, time: "03:00:00", cmd: "python -m scopemem.run experiment=E5 model={model} task=$TASK"}
+  - {name: judge,     kind: judge, array: 4,  time: "03:00:00", cmd: "python -m scopemem.eval.judge experiment=E5 model={model} run.shard=$TASK run.num_shards=4"}
+  - {name: aggregate, kind: cpu,   array: 1,  time: "00:30:00", cmd: "python -m scopemem.aggregate experiment=E5"}

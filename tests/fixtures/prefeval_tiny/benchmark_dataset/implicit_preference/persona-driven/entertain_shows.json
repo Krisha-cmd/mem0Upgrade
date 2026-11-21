@@ -1,0 +1,50 @@
+[
+ {
+  "preference": "I don't watch anything with graphic violence.",
+  "question": "Recommend a series to binge this weekend.",
+  "explanation": "synthetic",
+  "persona": "A synthetic persona",
+  "conversation": {
+   "0": {
+    "user": "By the way, I don't watch anything with graphic violence.",
+    "assistant": "Understood."
+   }
+  }
+ },
+ {
+  "preference": "I prefer documentaries over fiction.",
+  "question": "What should I watch on a rainy evening?",
+  "explanation": "synthetic",
+  "persona": "A synthetic persona",
+  "conversation": {
+   "0": {
+    "user": "By the way, I prefer documentaries over fiction.",
+    "assistant": "Understood."
+   }
+  }
+ },
+ {
+  "preference": "I only watch shows with subtitles available.",
+  "question": "Suggest a foreign film.",
+  "explanation": "synthetic",
+  "persona": "A synthetic persona",
+  "conversation": {
+   "0": {
+    "user": "By the way, I only watch shows with subtitles available.",
+    "assistant": "Understood."
+   }
+  }
+ },
+ {
+  "preference": "I avoid reality TV completely.",
+  "question": "What TV shows are popular right now?",
+  "explanation": "synthetic",
+  "persona": "A synthetic persona",
+  "conversation": {
+   "0": {
+    "user": "By the way, I avoid reality TV completely.",
+    "assistant": "Understood."
+   }
+  }
+ }
+]

@@ -1,0 +1,50 @@
+[
+ {
+  "preference": "I only use Apple devices and won't switch to Android.",
+  "question": "Which smartwatch should I buy?",
+  "explanation": "synthetic",
+  "persona": "A synthetic persona",
+  "conversation": {
+   "0": {
+    "user": "By the way, I only use Apple devices and won't switch to Android.",
+    "assistant": "Understood."
+   }
+  }
+ },
+ {
+  "preference": "I refuse to buy anything with a subscription fee.",
+  "question": "Recommend software for editing photos.",
+  "explanation": "synthetic",
+  "persona": "A synthetic persona",
+  "conversation": {
+   "0": {
+    "user": "By the way, I refuse to buy anything with a subscription fee.",
+    "assistant": "Understood."
+   }
+  }
+ },
+ {
+  "preference": "I need gadgets that are repairable.",
+  "question": "What laptop should I get for university?",
+  "explanation": "synthetic",
+  "persona": "A synthetic persona",
+  "conversation": {
+   "0": {
+    "user": "By the way, I need gadgets that are repairable.",
+    "assistant": "Understood."
+   }
+  }
+ },
+ {
+  "preference": "I avoid smart speakers for privacy reasons.",
+  "question": "How can I set up a smart home?",
+  "explanation": "synthetic",
+  "persona": "A synthetic persona",
+  "conversation": {
+   "0": {
+    "user": "By the way, I avoid smart speakers for privacy reasons.",
+    "assistant": "Understood."
+   }
+  }
+ }
+]

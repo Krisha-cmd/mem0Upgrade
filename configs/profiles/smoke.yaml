@@ -1,0 +1,14 @@
+# make smoke: FakeLLM, hash embedder/cross-encoder, whitespace tokens, tiny fixture data.
+llm_backend: fake
+embedder: hash
+xenc: hash
+tokens: {counter: whitespace}
+exp_suffix: _smoke
+paths:
+  prefeval_root: tests/fixtures/prefeval_tiny
+  processed: results/raw/_smoke_processed
+  tuning: results/raw/_smoke_tuning
+  cache: cache/smoke
+  models_ft: results/raw/_smoke_models
+run: {limit: 10, n_levels: [5]}
+data: {n_levels: [5], main_n: 5}

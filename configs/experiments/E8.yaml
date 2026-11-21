@@ -1,0 +1,11 @@
+name: E8
+kind: generalisation
+parts:
+  prefeval_implicit: {forms: [choice, persona], n_levels: [25], conditions: [B2_all, B3_sim_k5, S_best, UB_oracle]}
+  personamem: {split: 32k, conditions: [B2_all, B3_sim_k5, S_best]}
+  locomo: {conditions: [mem0_plain, mem0_scopemem]}
+models: [qwen7b]
+stages:
+  - {name: gen,       kind: model, array: tasks, time: "04:00:00", cmd: "python -m scopemem.run experiment=E8 model={model} task=$TASK"}
+  - {name: judge,     kind: judge, array: 4,     time: "03:00:00", cmd: "python -m scopemem.eval.judge experiment=E8 model={model} run.shard=$TASK run.num_shards=4"}
+  - {name: aggregate, kind: cpu,   array: 1,     time: "00:30:00", cmd: "python -m scopemem.aggregate experiment=E8"}

@@ -1,0 +1,78 @@
+[
+ {
+  "preference": "I am afraid of flying, so I avoid planes entirely.",
+  "question": "Plan a five-day trip from London to Rome for me.",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: Plan a five-day trip from London to Rome for me.",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "Plan a five-day trip from London to Rome for me.",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I am afraid of flying, so I avoid planes entirely.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ },
+ {
+  "preference": "I get motion sick on boats and ferries.",
+  "question": "How should I get from Athens to the Greek islands?",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: How should I get from Athens to the Greek islands?",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "How should I get from Athens to the Greek islands?",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I get motion sick on boats and ferries.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ },
+ {
+  "preference": "I refuse to rent cars that are not electric.",
+  "question": "Which rental car should I book for a road trip?",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: Which rental car should I book for a road trip?",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "Which rental car should I book for a road trip?",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I refuse to rent cars that are not electric.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ },
+ {
+  "preference": "I prefer overnight trains to save on hotels.",
+  "question": "What's the best way to travel across Europe cheaply?",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: What's the best way to travel across Europe cheaply?",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "What's the best way to travel across Europe cheaply?",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I prefer overnight trains to save on hotels.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ }
+]

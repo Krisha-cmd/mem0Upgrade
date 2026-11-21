@@ -1,0 +1,8 @@
+name: judge_qwen72b_awq
+hf_id: Qwen/Qwen2.5-72B-Instruct-AWQ
+tensor_parallel_size: 1      # try 1 GPU first; set 2 + slurm: gpu2 if it does not fit
+max_model_len: 16384
+gpu_memory_utilization: 0.90
+quantization: awq_marlin
+slurm: gpu1
+fallback: qwen32b_judge

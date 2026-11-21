@@ -1,0 +1,32 @@
+# secrets — never commit
+.env
+*.env
+*.token
+hf_token*
+.hf_token
+*secret*
+
+# envs / caches
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+cache/
+logs/
+scratch/
+
+# data and raw results (large / licensed)
+data/raw/
+data/processed/
+results/raw/
+results/jobs/
+models_ft/
+.stage/
+STOP_*
+models_ft/
+results/tuning_local/
+~/
+results/tables/*_local*
+results/figures/*_local*
+results/tables/*_smoke*

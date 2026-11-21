@@ -1,0 +1,3 @@
+# Full-scale runs on CSIS. Paths are relative to the repo root ($HOME/scopemem).
+llm_backend: vllm
+tokens: {counter: hf}

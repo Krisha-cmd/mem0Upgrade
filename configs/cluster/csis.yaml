@@ -1,0 +1,25 @@
+# CSIS cluster facts (SOP v2). Items marked VERIFY must be confirmed on the login node:
+#   sinfo -o "%20N %40G"; scontrol show node csis.cn1 | grep -i gres
+#   sacctmgr show qos format=name,maxwall,maxtresperuser -p
+login_host: 172.24.16.132
+home: /nfs_home/users/${oc.env:USER,USERNAME}
+scratch: /scratch/users/${oc.env:USER,USERNAME}   # 30-day auto-deletion
+conda_sh: /nfs_home/software/miniconda/etc/profile.d/conda.sh
+modules: [miniconda, cuda/12.8]
+gres_typed: "gpu:a100-80gb"     # VERIFY; templates fall back to gres_fallback if rejected
+gres_fallback: "gpu"
+use_typed_gres: true
+qos_mode: partition             # VERIFY: partition (=--qos=<partition>) | omit
+limits: {max_jobs: 5, max_gpus: 3}
+partitions:
+  debug:     {max_time: "00:30:00", max_cpus: 16, max_mem_gb: 48, max_gpus: 0}
+  cpu-short: {max_time: "12:00:00", max_cpus: 64, max_mem_gb: 96, max_gpus: 0}
+  gpu-short: {max_time: "08:00:00", max_cpus: 24, max_mem_gb: 96, max_gpus: 2}
+  gpu-long:  {max_time: "12:00:00", max_cpus: 16, max_mem_gb: 80, max_gpus: 2}
+  gpu-1day:  {max_time: "24:00:00", max_cpus: 16, max_mem_gb: 64, max_gpus: 2}
+  gpu-3day:  {max_time: "72:00:00", max_cpus: 16, max_mem_gb: 64, max_gpus: 1}
+defaults:
+  gpu1: {partition: gpu-short, cpus: 8, mem: 64G, gpus: 1, throttle: 3}
+  gpu2: {partition: gpu-long, cpus: 16, mem: 80G, gpus: 2, throttle: 1}
+  cpu:  {partition: cpu-short, cpus: 8, mem: 32G, gpus: 0, throttle: 5}
+  debug: {partition: debug, cpus: 4, mem: 16G, gpus: 0, throttle: 1}

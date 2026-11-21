@@ -1,0 +1,18 @@
+name: E7
+kind: generation
+data_set: full
+n_levels: [25]
+models: [qwen7b]
+conditions: [S_best, A1_noscope_embed, A2_scopeonly_embed, A3_exonly_embed, A4_noalways_embed]
+extra_sweeps:
+  scope_writer: [qwen7b, qwen32b]
+  embedder: [bge_base, bge_m3, minilm]
+  tau_quantiles: 20
+  k_max: [5, 10, null]
+tuning_from: E1
+num_shards: 4
+judge: true
+stages:
+  - {name: gen,       kind: model, array: tasks, time: "03:00:00", cmd: "python -m scopemem.run experiment=E7 model={model} task=$TASK"}
+  - {name: judge,     kind: judge, array: 4,     time: "04:00:00", cmd: "python -m scopemem.eval.judge experiment=E7 model={model} run.shard=$TASK run.num_shards=4"}
+  - {name: aggregate, kind: cpu,   array: 1,     time: "00:30:00", cmd: "python -m scopemem.aggregate experiment=E7"}

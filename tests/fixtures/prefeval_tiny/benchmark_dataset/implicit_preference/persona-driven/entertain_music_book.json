@@ -1,0 +1,50 @@
+[
+ {
+  "preference": "I dislike heavy metal music.",
+  "question": "Make me a playlist for a long drive.",
+  "explanation": "synthetic",
+  "persona": "A synthetic persona",
+  "conversation": {
+   "0": {
+    "user": "By the way, I dislike heavy metal music.",
+    "assistant": "Understood."
+   }
+  }
+ },
+ {
+  "preference": "I only read physical books, never e-readers.",
+  "question": "What should I take to read on holiday?",
+  "explanation": "synthetic",
+  "persona": "A synthetic persona",
+  "conversation": {
+   "0": {
+    "user": "By the way, I only read physical books, never e-readers.",
+    "assistant": "Understood."
+   }
+  }
+ },
+ {
+  "preference": "I love jazz from the 1950s.",
+  "question": "Recommend a concert to attend this weekend.",
+  "explanation": "synthetic",
+  "persona": "A synthetic persona",
+  "conversation": {
+   "0": {
+    "user": "By the way, I love jazz from the 1950s.",
+    "assistant": "Understood."
+   }
+  }
+ },
+ {
+  "preference": "I can't stand horror novels.",
+  "question": "Suggest a book club pick for October.",
+  "explanation": "synthetic",
+  "persona": "A synthetic persona",
+  "conversation": {
+   "0": {
+    "user": "By the way, I can't stand horror novels.",
+    "assistant": "Understood."
+   }
+  }
+ }
+]

@@ -1,0 +1,22 @@
+[
+ {
+  "preference": "I learn best through hands-on projects.",
+  "question": "How should I learn Python?",
+  "explanation": "synthetic"
+ },
+ {
+  "preference": "I find video lectures boring.",
+  "question": "What's a good way to study history?",
+  "explanation": "synthetic"
+ },
+ {
+  "preference": "I need material in short daily lessons.",
+  "question": "Help me learn Spanish this year.",
+  "explanation": "synthetic"
+ },
+ {
+  "preference": "I prefer visual diagrams over text.",
+  "question": "Explain how to understand statistics.",
+  "explanation": "synthetic"
+ }
+]

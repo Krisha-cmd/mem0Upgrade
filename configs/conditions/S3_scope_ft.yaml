@@ -1,0 +1,6 @@
+id: S3_scope_ft
+gate: scope_ft
+fields: [scope, examples]
+tau: tune
+use_always_on: true
+k_max: 10

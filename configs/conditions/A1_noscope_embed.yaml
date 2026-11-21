@@ -1,0 +1,6 @@
+id: A1_noscope_embed
+gate: scope_embed
+fields: [text]
+tau: tune
+use_always_on: false
+k_max: 10

@@ -1,0 +1,22 @@
+[
+ {
+  "preference": "I am afraid of flying, so I avoid planes entirely.",
+  "question": "Plan a five-day trip from London to Rome for me.",
+  "explanation": "synthetic"
+ },
+ {
+  "preference": "I get motion sick on boats and ferries.",
+  "question": "How should I get from Athens to the Greek islands?",
+  "explanation": "synthetic"
+ },
+ {
+  "preference": "I refuse to rent cars that are not electric.",
+  "question": "Which rental car should I book for a road trip?",
+  "explanation": "synthetic"
+ },
+ {
+  "preference": "I prefer overnight trains to save on hotels.",
+  "question": "What's the best way to travel across Europe cheaply?",
+  "explanation": "synthetic"
+ }
+]

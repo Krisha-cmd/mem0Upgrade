@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "scopemem"
+version = "0.1.0"
+description = "ScopeMem: applicability-aware preference memory for token-efficient personalisation"
+requires-python = ">=3.11,<3.13"
+# Core deps: CPU-only, enough for tests, data building, aggregation and plots.
+# Exact versions used on the cluster are frozen to results/env/ (see docs/DECISIONS.md D-006).
+dependencies = [
+  "pydantic>=2.7,<3",
+  "omegaconf>=2.3,<2.5",
+  "pyyaml>=6",
+  "numpy>=1.26",
+  "scipy>=1.11",
+  "statsmodels>=0.14",
+  "pandas>=2.1",
+  "matplotlib>=3.8",
+  "jinja2>=3.1",
+  "tokenizers>=0.19",
+]
+
+[project.optional-dependencies]
+# GPU stack — pinned. vllm 0.11.0 ships torch 2.8.0 built for CUDA 12.8, which the
+# cluster driver (570.158.01, max CUDA 12.8) supports. Newer vLLM pulls torch>=2.11 (CUDA 13).
+gpu = [
+  "vllm==0.11.0",
+  "torch==2.8.0",
+  "transformers==4.57.1",
+  "sentence-transformers==5.1.2",
+  "mem0ai==2.2.1",
+  "qdrant-client>=1.12,<2",
+]
+# Local CPU embedders / cross-encoders (laptop E1 plumbing run).
+cpu-models = [
+  "sentence-transformers>=5,<6",
+  "transformers>=4.56,<5",
+]
+dev = ["pytest>=8"]
+
+[project.scripts]
+scopemem-run = "scopemem.run:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+scopemem = ["prompts/*.txt", "prompts/judge_prefeval/*.txt", "data/*.yaml"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

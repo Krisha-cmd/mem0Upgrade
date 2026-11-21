@@ -1,0 +1,78 @@
+[
+ {
+  "preference": "I only stay in hotels with a pool.",
+  "question": "Find me accommodation in Barcelona.",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: Find me accommodation in Barcelona.",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "Find me accommodation in Barcelona.",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I only stay in hotels with a pool.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ },
+ {
+  "preference": "I avoid big chain hotels and prefer boutique ones.",
+  "question": "Where should I stay in Lisbon?",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: Where should I stay in Lisbon?",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "Where should I stay in Lisbon?",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I avoid big chain hotels and prefer boutique ones.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ },
+ {
+  "preference": "I need wheelchair-accessible rooms.",
+  "question": "Book a hotel for my conference in Berlin.",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: Book a hotel for my conference in Berlin.",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "Book a hotel for my conference in Berlin.",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I need wheelchair-accessible rooms.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ },
+ {
+  "preference": "I refuse to stay anywhere without free breakfast.",
+  "question": "Recommend a hotel near the beach.",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: Recommend a hotel near the beach.",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "Recommend a hotel near the beach.",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I refuse to stay anywhere without free breakfast.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ }
+]

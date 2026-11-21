@@ -1,0 +1,6 @@
+id: A2_scopeonly_embed
+gate: scope_embed
+fields: [scope]
+tau: tune
+use_always_on: true
+k_max: 10

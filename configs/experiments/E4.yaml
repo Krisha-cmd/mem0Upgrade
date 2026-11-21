@@ -1,0 +1,7 @@
+# Over-application judge on outputs of E2 and E3 (no new generation).
+name: E4
+kind: judge_only
+sources: [E2, E3]
+stages:
+  - {name: judge,     kind: judge, array: 8, time: "04:00:00", cmd: "python -m scopemem.eval.judge experiment=E4 mode=false_application run.shard=$TASK run.num_shards=8"}
+  - {name: aggregate, kind: cpu,   array: 1, time: "00:30:00", cmd: "python -m scopemem.aggregate experiment=E4"}

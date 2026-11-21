@@ -1,0 +1,6 @@
+id: A3_exonly_embed
+gate: scope_embed
+fields: [examples]
+tau: tune
+use_always_on: true
+k_max: 10

@@ -1,0 +1,5 @@
+name: bge_m3
+type: st
+hf_id: BAAI/bge-m3
+query_prefix: ""
+batch_size: 128

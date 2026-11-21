@@ -1,0 +1,15 @@
+# Main result at N=25. S_best is fixed in docs/PROTOCOL.md before this runs.
+name: E2
+kind: generation
+data_set: full
+n_levels: [25]
+models: [qwen7b, llama8b, qwen32b]
+sampled_seeds: {model: qwen7b, seeds: [1, 2, 3], temperature: 0.7}
+conditions: [B0_none, B1_full, B2_all, B3_sim_k5, B4_sim_rerank, B5_llm_select, S1_scope_embed, S2_scope_xenc, S3_scope_ft, UB_oracle]
+tuning_from: E1
+num_shards: 8
+judge: true
+stages:
+  - {name: gen,       kind: model, array: tasks, time: "03:00:00", cmd: "python -m scopemem.run experiment=E2 model={model} task=$TASK"}
+  - {name: judge,     kind: judge, array: 8,     time: "04:00:00", cmd: "python -m scopemem.eval.judge experiment=E2 model={model} run.shard=$TASK run.num_shards=8"}
+  - {name: aggregate, kind: cpu,   array: 1,     time: "01:00:00", cmd: "python -m scopemem.aggregate experiment=E2"}

@@ -1,0 +1,15 @@
+# B5 LLM-selector prompt, version LLM_SELECT_V1.
+### END HEADER ###
+[prompt-id: LLM_SELECT_V1]
+Below is a numbered list of a user's stored preferences, followed by the user's new request.
+Decide which preferences should influence the answer to this request. Include a preference if
+answering well requires respecting it, even if the request does not mention its topic. Include
+preferences that apply to every request (e.g. style or language).
+
+<preferences>
+{numbered}
+</preferences>
+
+<request>{query}</request>
+
+Return ONLY a JSON list of the applicable preference numbers, e.g. [2, 7]. Return [] if none apply.

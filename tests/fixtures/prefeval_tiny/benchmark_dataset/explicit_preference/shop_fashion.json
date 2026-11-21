@@ -1,0 +1,22 @@
+[
+ {
+  "preference": "I only wear sustainable, second-hand clothing.",
+  "question": "What should I wear to a wedding?",
+  "explanation": "synthetic"
+ },
+ {
+  "preference": "I avoid leather products.",
+  "question": "Recommend shoes for the office.",
+  "explanation": "synthetic"
+ },
+ {
+  "preference": "I dislike bright colours in clothing.",
+  "question": "Help me pick a summer wardrobe.",
+  "explanation": "synthetic"
+ },
+ {
+  "preference": "I need clothes without wool, it makes me itch.",
+  "question": "What jumper should I buy for winter?",
+  "explanation": "synthetic"
+ }
+]

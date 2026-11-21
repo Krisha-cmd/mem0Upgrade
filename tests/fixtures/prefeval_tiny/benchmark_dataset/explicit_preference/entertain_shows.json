@@ -1,0 +1,22 @@
+[
+ {
+  "preference": "I don't watch anything with graphic violence.",
+  "question": "Recommend a series to binge this weekend.",
+  "explanation": "synthetic"
+ },
+ {
+  "preference": "I prefer documentaries over fiction.",
+  "question": "What should I watch on a rainy evening?",
+  "explanation": "synthetic"
+ },
+ {
+  "preference": "I only watch shows with subtitles available.",
+  "question": "Suggest a foreign film.",
+  "explanation": "synthetic"
+ },
+ {
+  "preference": "I avoid reality TV completely.",
+  "question": "What TV shows are popular right now?",
+  "explanation": "synthetic"
+ }
+]

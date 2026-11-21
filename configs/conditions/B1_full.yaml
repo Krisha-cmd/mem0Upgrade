@@ -1,0 +1,3 @@
+id: B1_full
+gate: none
+history: true      # whole history H as chat turns, no memory block

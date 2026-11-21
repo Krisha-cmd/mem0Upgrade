@@ -1,0 +1,11 @@
+# Cost of ownership (from E2/E5 records) + latency (200 queries, batch size 1, one A100).
+name: E6
+kind: latency
+data_set: full
+n_levels: [25]
+limit: 200
+models: [qwen7b]
+conditions: [B2_all, B3_sim_k5, B5_llm_select, S1_scope_embed, S3_scope_ft]
+stages:
+  - {name: latency,   kind: model, array: 1, time: "02:00:00", cmd: "python -m scopemem.run experiment=E6 model={model} mode=latency"}
+  - {name: aggregate, kind: cpu,   array: 1, time: "00:30:00", cmd: "python -m scopemem.aggregate experiment=E6"}

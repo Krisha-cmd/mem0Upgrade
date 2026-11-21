@@ -1,0 +1,29 @@
+# Conda env for the CSIS cluster.  Create on the LOGIN node with:
+#   module load miniconda && source /nfs_home/software/miniconda/etc/profile.d/conda.sh
+#   conda env create -f environment.yml
+# The GPU stack is pinned (see pyproject [gpu] extra and docs/DECISIONS.md D-005).
+# After creation, scripts/setup_env_cluster.sh freezes the full resolved set to
+# results/env/pip_freeze.txt and results/env/conda_env.yml.
+name: scopemem
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  - pip:
+      - vllm==0.11.0
+      - torch==2.8.0
+      - transformers==4.57.1
+      - sentence-transformers==5.1.2
+      - mem0ai==2.2.1
+      - qdrant-client>=1.12,<2
+      - pydantic>=2.11,<3
+      - omegaconf==2.3.0
+      - pyyaml>=6
+      - pandas>=2.1,<3
+      - scipy>=1.11
+      - statsmodels>=0.14
+      - matplotlib>=3.8
+      - jinja2>=3.1
+      - pytest>=8
+      - -e .

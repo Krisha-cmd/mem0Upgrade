@@ -1,0 +1,78 @@
+[
+ {
+  "preference": "I have a bad knee and cannot run.",
+  "question": "Give me a weekly cardio plan.",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: Give me a weekly cardio plan.",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "Give me a weekly cardio plan.",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I have a bad knee and cannot run.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ },
+ {
+  "preference": "I hate going to crowded gyms.",
+  "question": "How can I build strength this year?",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: How can I build strength this year?",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "How can I build strength this year?",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I hate going to crowded gyms.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ },
+ {
+  "preference": "I only have 20 minutes a day to exercise.",
+  "question": "Design a fitness routine for me.",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: Design a fitness routine for me.",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "Design a fitness routine for me.",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I only have 20 minutes a day to exercise.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ },
+ {
+  "preference": "I prefer exercising outdoors in nature.",
+  "question": "What workouts should I try this summer?",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: What workouts should I try this summer?",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "What workouts should I try this summer?",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I prefer exercising outdoors in nature.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ }
+]

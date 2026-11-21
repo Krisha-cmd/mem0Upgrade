@@ -1,0 +1,22 @@
+[
+ {
+  "preference": "I only stay in hotels with a pool.",
+  "question": "Find me accommodation in Barcelona.",
+  "explanation": "synthetic"
+ },
+ {
+  "preference": "I avoid big chain hotels and prefer boutique ones.",
+  "question": "Where should I stay in Lisbon?",
+  "explanation": "synthetic"
+ },
+ {
+  "preference": "I need wheelchair-accessible rooms.",
+  "question": "Book a hotel for my conference in Berlin.",
+  "explanation": "synthetic"
+ },
+ {
+  "preference": "I refuse to stay anywhere without free breakfast.",
+  "question": "Recommend a hotel near the beach.",
+  "explanation": "synthetic"
+ }
+]

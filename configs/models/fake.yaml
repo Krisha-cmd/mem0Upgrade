@@ -1,0 +1,7 @@
+name: fake
+hf_id: fake
+tensor_parallel_size: 1
+max_model_len: 32768
+gpu_memory_utilization: 0.0
+quantization: null
+slurm: cpu

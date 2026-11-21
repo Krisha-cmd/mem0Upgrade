@@ -1,0 +1,50 @@
+[
+ {
+  "preference": "I am afraid of flying, so I avoid planes entirely.",
+  "question": "Plan a five-day trip from London to Rome for me.",
+  "explanation": "synthetic",
+  "persona": "A synthetic persona",
+  "conversation": {
+   "0": {
+    "user": "By the way, I am afraid of flying, so I avoid planes entirely.",
+    "assistant": "Understood."
+   }
+  }
+ },
+ {
+  "preference": "I get motion sick on boats and ferries.",
+  "question": "How should I get from Athens to the Greek islands?",
+  "explanation": "synthetic",
+  "persona": "A synthetic persona",
+  "conversation": {
+   "0": {
+    "user": "By the way, I get motion sick on boats and ferries.",
+    "assistant": "Understood."
+   }
+  }
+ },
+ {
+  "preference": "I refuse to rent cars that are not electric.",
+  "question": "Which rental car should I book for a road trip?",
+  "explanation": "synthetic",
+  "persona": "A synthetic persona",
+  "conversation": {
+   "0": {
+    "user": "By the way, I refuse to rent cars that are not electric.",
+    "assistant": "Understood."
+   }
+  }
+ },
+ {
+  "preference": "I prefer overnight trains to save on hotels.",
+  "question": "What's the best way to travel across Europe cheaply?",
+  "explanation": "synthetic",
+  "persona": "A synthetic persona",
+  "conversation": {
+   "0": {
+    "user": "By the way, I prefer overnight trains to save on hotels.",
+    "assistant": "Understood."
+   }
+  }
+ }
+]

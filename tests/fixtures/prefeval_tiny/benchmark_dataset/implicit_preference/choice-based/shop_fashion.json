@@ -1,0 +1,78 @@
+[
+ {
+  "preference": "I only wear sustainable, second-hand clothing.",
+  "question": "What should I wear to a wedding?",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: What should I wear to a wedding?",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "What should I wear to a wedding?",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I only wear sustainable, second-hand clothing.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ },
+ {
+  "preference": "I avoid leather products.",
+  "question": "Recommend shoes for the office.",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: Recommend shoes for the office.",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "Recommend shoes for the office.",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I avoid leather products.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ },
+ {
+  "preference": "I dislike bright colours in clothing.",
+  "question": "Help me pick a summer wardrobe.",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: Help me pick a summer wardrobe.",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "Help me pick a summer wardrobe.",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I dislike bright colours in clothing.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ },
+ {
+  "preference": "I need clothes without wool, it makes me itch.",
+  "question": "What jumper should I buy for winter?",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: What jumper should I buy for winter?",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "What jumper should I buy for winter?",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I need clothes without wool, it makes me itch.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ }
+]

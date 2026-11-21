@@ -1,0 +1,12 @@
+# Laptop E1 plumbing run: real small CPU embedder + CE, FakeLLM scopes/selector, whitespace tokens.
+llm_backend: fake
+embedder: minilm
+xenc: minilm_ce
+tokens: {counter: whitespace}
+exp_suffix: _local
+paths:
+  tuning: results/tuning_local
+  cache: cache/local
+  models_ft: models_ft/local
+run: {limit: 200}
+s3_train: {max_train_pairs: 4000, batch_size: 32}

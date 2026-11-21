@@ -1,0 +1,78 @@
+[
+ {
+  "preference": "I am strictly vegan and eat no animal products.",
+  "question": "Suggest a dinner menu for my birthday party.",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: Suggest a dinner menu for my birthday party.",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "Suggest a dinner menu for my birthday party.",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I am strictly vegan and eat no animal products.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ },
+ {
+  "preference": "I have a severe peanut allergy.",
+  "question": "What snacks should I pack for a hiking trip?",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: What snacks should I pack for a hiking trip?",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "What snacks should I pack for a hiking trip?",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I have a severe peanut allergy.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ },
+ {
+  "preference": "I avoid gluten because of coeliac disease.",
+  "question": "Recommend a bakery breakfast in Paris.",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: Recommend a bakery breakfast in Paris.",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "Recommend a bakery breakfast in Paris.",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I avoid gluten because of coeliac disease.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ },
+ {
+  "preference": "I don't drink alcohol at all.",
+  "question": "Plan an evening out with my colleagues.",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: Plan an evening out with my colleagues.",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "Plan an evening out with my colleagues.",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I don't drink alcohol at all.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ }
+]

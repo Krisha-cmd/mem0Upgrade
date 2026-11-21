@@ -1,0 +1,78 @@
+[
+ {
+  "preference": "I dislike heavy metal music.",
+  "question": "Make me a playlist for a long drive.",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: Make me a playlist for a long drive.",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "Make me a playlist for a long drive.",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I dislike heavy metal music.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ },
+ {
+  "preference": "I only read physical books, never e-readers.",
+  "question": "What should I take to read on holiday?",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: What should I take to read on holiday?",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "What should I take to read on holiday?",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I only read physical books, never e-readers.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ },
+ {
+  "preference": "I love jazz from the 1950s.",
+  "question": "Recommend a concert to attend this weekend.",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: Recommend a concert to attend this weekend.",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "Recommend a concert to attend this weekend.",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I love jazz from the 1950s.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ },
+ {
+  "preference": "I can't stand horror novels.",
+  "question": "Suggest a book club pick for October.",
+  "explanation": "synthetic",
+  "implicit_query": "Options for: Suggest a book club pick for October.",
+  "options": [
+   "A",
+   "B",
+   "C",
+   "D"
+  ],
+  "conversation": {
+   "query": "Suggest a book club pick for October.",
+   "assistant_options": "1. A 2. B 3. C 4. D",
+   "user_selection": "I'll pick A; I can't stand horror novels.",
+   "assistant_acknowledgment": "Noted."
+  },
+  "aligned_op": "A"
+ }
+]

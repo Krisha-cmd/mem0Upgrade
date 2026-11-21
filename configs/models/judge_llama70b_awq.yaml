@@ -1,0 +1,7 @@
+name: judge_llama70b_awq
+hf_id: casperhansen/llama-3.3-70b-instruct-awq   # community AWQ of meta-llama/Llama-3.3-70B-Instruct (D-008)
+tensor_parallel_size: 2
+max_model_len: 16384
+gpu_memory_utilization: 0.90
+quantization: awq_marlin
+slurm: gpu2

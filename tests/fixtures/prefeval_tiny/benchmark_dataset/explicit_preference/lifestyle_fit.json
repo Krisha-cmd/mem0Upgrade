@@ -1,0 +1,22 @@
+[
+ {
+  "preference": "I have a bad knee and cannot run.",
+  "question": "Give me a weekly cardio plan.",
+  "explanation": "synthetic"
+ },
+ {
+  "preference": "I hate going to crowded gyms.",
+  "question": "How can I build strength this year?",
+  "explanation": "synthetic"
+ },
+ {
+  "preference": "I only have 20 minutes a day to exercise.",
+  "question": "Design a fitness routine for me.",
+  "explanation": "synthetic"
+ },
+ {
+  "preference": "I prefer exercising outdoors in nature.",
+  "question": "What workouts should I try this summer?",
+  "explanation": "synthetic"
+ }
+]

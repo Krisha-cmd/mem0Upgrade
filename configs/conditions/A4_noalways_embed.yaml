@@ -1,0 +1,6 @@
+id: A4_noalways_embed
+gate: scope_embed
+fields: [scope, examples]
+tau: tune
+use_always_on: false
+k_max: 10

@@ -1,0 +1,13 @@
+name: E3
+kind: generation
+data_set: sub500
+n_levels: [1, 5, 10, 25, 50, 100]
+models: [qwen7b]
+conditions: [B2_all, B3_sim_k5, S_best, UB_oracle, B1_full]
+tuning_from: E1
+num_shards: 4
+judge: true
+stages:
+  - {name: gen,       kind: model, array: tasks, time: "03:00:00", cmd: "python -m scopemem.run experiment=E3 model={model} task=$TASK"}
+  - {name: judge,     kind: judge, array: 6,     time: "04:00:00", cmd: "python -m scopemem.eval.judge experiment=E3 model={model} run.shard=$TASK run.num_shards=6"}
+  - {name: aggregate, kind: cpu,   array: 1,     time: "01:00:00", cmd: "python -m scopemem.aggregate experiment=E3"}

@@ -1,0 +1,4 @@
+id: B4_sim_rerank
+gate: sim_rerank
+rerank_top: 20
+k: tune
