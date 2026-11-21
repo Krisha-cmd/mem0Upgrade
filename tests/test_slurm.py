@@ -29,9 +29,9 @@ def test_e2_dry_run_lines(tmp_path):
     gen7, gen8, gen32 = lines[0], lines[1], lines[2]
     for l in (gen7, gen8):
         assert "--partition=gpu-short" in l and "--gres=gpu:a100-80gb:1" in l
-        assert re.search(r"--array=0-79%3 ", l)            # 10 conditions x 8 shards, throttle 3
+        assert re.search(r"--array=0-159%3 ", l)           # 2 data sets x 10 conditions x 8 shards, throttle 3
     assert "--partition=gpu-long" in gen32 and "--gres=gpu:a100-80gb:2" in gen32
-    assert re.search(r"--array=0-79%1 ", gen32)             # 2-GPU arrays throttle 1
+    assert re.search(r"--array=0-159%1 ", gen32)            # 2-GPU arrays throttle 1
     # GPU stages are serialised with afterany; judge waits for its own model's gen with afterok
     assert f"afterany:{jobs['E2-gen-qwen7b']}" in gen8
     judge8 = lines[4]
@@ -55,6 +55,12 @@ def test_never_more_than_three_gpus(tmp_path):
 
 def test_e1_stage_graph(tmp_path):
     jobs, lines = _dry("E1", tmp_path)
-    assert list(jobs) == ["E1-build", "E1-scopes-qwen7b", "E1-s3_train-qwen7b", "E1-retrieval-qwen7b", "E1-aggregate"]
-    assert "--array=0-4%3" in lines[2] and "--array=0-5%3" in lines[3]
-    assert f"afterok:{jobs['E1-build']}" in lines[1]
+    assert list(jobs) == ["E1-build", "E1-scopes-qwen7b", "E1-xt_generate", "E1-xt_verify", "E1-xt_build",
+                          "E1-s3_train-qwen7b", "E1-retrieval-qwen7b", "E1-aggregate"]
+    by = dict(zip(jobs, lines))
+    assert "--partition=gpu-long" in by["E1-xt_generate"] and "a100-80gb:2" in by["E1-xt_generate"]
+    assert "--partition=gpu-short" in by["E1-xt_verify"] and "a100-80gb:1" in by["E1-xt_verify"]
+    assert "--partition=cpu-short" in by["E1-xt_build"]
+    assert f"afterok:{jobs['E1-xt_build']}" in by["E1-s3_train-qwen7b"]
+    assert "--array=0-4%3" in by["E1-s3_train-qwen7b"] and "--array=0-5%3" in by["E1-retrieval-qwen7b"]
+    assert f"afterok:{jobs['E1-build']}" in by["E1-scopes-qwen7b"]

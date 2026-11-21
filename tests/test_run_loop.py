@@ -61,5 +61,5 @@ def test_resume_skips_finished_and_stop_exits(tmp_path, monkeypatch):
 def test_task_enumeration(tmp_path):
     cfg = make_cfg(tmp_path, "E2", ["run.n_levels=[25]"])
     tasks = runmod.enumerate_tasks(cfg)
-    assert len(tasks) == len(cfg.experiment.conditions) * int(cfg.experiment.num_shards)
-    assert tasks[0] == ("B0_none", 0, 25) and tasks[9] == ("B1_full", 1, 25)
+    assert len(tasks) == len(cfg.experiment.data_sets) * len(cfg.experiment.conditions) * int(cfg.experiment.num_shards)
+    assert tasks[0] == ("full", "B0_none", 0, 25) and tasks[9] == ("full", "B1_full", 1, 25)

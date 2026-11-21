@@ -1,14 +1,18 @@
-"""Tuning without leakage (section 6.4): tau / k chosen on the dev folds of each test fold,
-maximising micro-F1 of the gate's selection against G (retrieval only).
+"""Tuning without leakage (section 6.4): tau / k chosen on the dev folds of each test fold
+(retrieval only, no generation).
 
-Micro-F1 pools TP/FP/FN over instances, so null instances (G = {}) contribute their false
-positives (D-016). Ties are broken towards fewer selected preferences (higher tau / lower k).
+Objectives (``gate.tune_objective``):
+- ``recall_floor`` (default, D-032): the strictest setting (highest tau / smallest k) whose pooled
+  dev recall of G is >= ``gate.recall_floor`` (0.95). If no setting reaches the floor, the
+  setting with the highest recall is used and the miss is recorded.
+- ``f1``: micro-F1 (pooled TP/FP/FN; null instances add their false positives). Ties go to fewer
+  selections. This was the build prompt's original objective (D-016).
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Sequence
+from typing import Any, Sequence
 
 import numpy as np
 
@@ -45,21 +49,38 @@ def tau_candidates(scored: Sequence[Scored], n_quantiles: int) -> np.ndarray:
     return np.unique(np.concatenate([qs, [allv.max() + 1e-6]]))
 
 
-def tune_tau(gate: ScoringGate, scored: Sequence[Scored], n_quantiles: int = 101) -> tuple[float, float]:
-    best = (-1.0, -np.inf)
-    for tau in tau_candidates(scored, n_quantiles):
+def _pick(results: list[tuple[Any, float, float, float]], objective: str, floor: float) -> dict:
+    """results: (param, precision, recall, f1) ordered from strictest to loosest setting."""
+    if objective == "f1":            # max F1; ties -> the strictest setting (earliest)
+        best_f1 = max(r[3] for r in results)
+        best = next(i for i, r in enumerate(results) if abs(r[3] - best_f1) <= 1e-12)
+        p, pr, rc, f = results[best]
+        return {"param": p, "precision": pr, "recall": rc, "f1": f, "floor_met": None}
+    if objective == "recall_floor":
+        for p, pr, rc, f in results:          # strictest first
+            if rc >= floor - 1e-12:
+                return {"param": p, "precision": pr, "recall": rc, "f1": f, "floor_met": True}
+        i = max(range(len(results)), key=lambda j: (results[j][2], -j))
+        p, pr, rc, f = results[i]
+        return {"param": p, "precision": pr, "recall": rc, "f1": f, "floor_met": False}
+    raise ValueError(f"unknown tune objective {objective}")
+
+
+def tune_tau(gate: ScoringGate, scored: Sequence[Scored], n_quantiles: int = 101,
+             objective: str = "f1", floor: float = 0.95) -> tuple[float, dict]:
+    res = []
+    for tau in sorted(tau_candidates(scored, n_quantiles), reverse=True):   # strictest first
         sel = [gate.apply(s.scores, s.prefs, tau=float(tau)).selected_ids for s in scored]
-        f = prf(sel, [s.gold for s in scored])[2]
-        if f > best[0] + 1e-12 or (abs(f - best[0]) <= 1e-12 and tau > best[1]):
-            best = (f, float(tau))
-    return best[1], best[0]
+        res.append((float(tau), *prf(sel, [s.gold for s in scored])))
+    d = _pick(res, objective, floor)
+    return d.pop("param"), d
 
 
-def tune_k(gate: ScoringGate, scored: Sequence[Scored], grid: Sequence[int]) -> tuple[int, float]:
-    best = (-1.0, 10 ** 9)
-    for k in sorted(grid):
+def tune_k(gate: ScoringGate, scored: Sequence[Scored], grid: Sequence[int],
+           objective: str = "f1", floor: float = 0.95) -> tuple[int, dict]:
+    res = []
+    for k in sorted(grid):                                                  # strictest first
         sel = [gate.apply(s.scores, s.prefs, k=int(k)).selected_ids for s in scored]
-        f = prf(sel, [s.gold for s in scored])[2]
-        if f > best[0] + 1e-12:
-            best = (f, int(k))
-    return best[1], best[0]
+        res.append((int(k), *prf(sel, [s.gold for s in scored])))
+    d = _pick(res, objective, floor)
+    return d.pop("param"), d

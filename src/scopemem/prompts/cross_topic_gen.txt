@@ -1,0 +1,22 @@
+# Cross-topic request generator, version CROSS_TOPIC_GEN_V1 (D-033). Changing the body changes cache keys.
+### END HEADER ###
+[prompt-id: CROSS_TOPIC_GEN_V1]
+A user has told an AI assistant this preference:
+
+<preference_text>{preference}</preference_text>
+
+The preference belongs to the topic "{home_topic}". Write {n} realistic requests that this user might
+later send to the assistant, each from a DIFFERENT topic chosen from this list:
+{other_topics}
+
+Every request must satisfy all of these:
+1. A good answer to the request must take the preference into account; ignoring it would give the
+   user an answer that conflicts with the preference or is useless to them.
+2. The request must NOT mention the preference, its subject, or words that give it away.
+   (Example: for "I am afraid of flying", "Plan a one-week honeymoon from London to Bali" is good;
+   "Plan a trip without planes" is bad.)
+3. The request is a natural, self-contained question or instruction of one or two sentences.
+4. Each request uses a different topic from the list, and none uses "{home_topic}".
+
+Return ONLY a JSON list, with no other text, in exactly this schema:
+[{{"topic": "<one topic from the list>", "request": "<the request>", "why": "<one short sentence: why the preference matters>"}}]

@@ -24,7 +24,7 @@ from .gates import GateContext
 from .llm.engine import GenParams, build_llm
 from .llm.tokens import build_counter, pref_token_delta
 from .prompting import build_messages, truncate_history_left
-from .runtime import base_record, get_instances, limit_instances, load_store
+from .runtime import base_record, data_sets, get_instances, limit_instances, load_store
 from .selection import run_condition, uses_scopes
 from .utils import JsonlAppender, done_ids, setup_logging, shard_slice
 
@@ -42,28 +42,29 @@ def stop_requested() -> bool:
     return any(p.exists() for p in paths)
 
 
-def enumerate_tasks(cfg: Any) -> list[tuple[str, int, int]]:
-    """(condition, shard, N) triples."""
+def enumerate_tasks(cfg: Any) -> list[tuple[str, str, int, int]]:
+    """(data_set, condition, shard, N) tuples; task index = position in this list."""
     exp = cfg.experiment
     nsh = int(cfg.run.get("num_shards_override") or exp.get("num_shards", 1))
     levels = list(cfg.run.n_levels or exp.n_levels)
-    return [(c, s, int(N)) for N in levels for c in exp.conditions for s in range(nsh)]
+    return [(ds, c, s, int(N)) for ds in data_sets(cfg) for N in levels for c in exp.conditions
+            for s in range(nsh)]
 
 
-def run_task(cfg: Any, cond_name: str, shard: int, N: int, nsh: int, ctx: GateContext,
+def run_task(cfg: Any, data_set: str, cond_name: str, shard: int, N: int, nsh: int, ctx: GateContext,
              counter, store, llm) -> Path:
     exp = cfg.experiment
     model = str(cfg.model_cfg.name)
     cond = condition_cfg(cond_name)
-    all_insts = get_instances(cfg, N)
+    all_insts = get_instances(cfg, N, data_set)
     limit = cfg.run.limit if cfg.run.limit is not None else exp.get("limit")
-    eval_all = limit_instances(all_insts, limit, int(cfg.seed), f"{exp.name}N{N}")
+    eval_all = limit_instances(all_insts, limit, int(cfg.seed), f"{exp.name}{data_set}N{N}")
     mine = shard_slice(eval_all, shard, nsh)
-    out = resolve_path(cfg.paths.raw_results) / exp_name(cfg) / model / cond_name / f"N{N}_shard_{shard}.jsonl"
+    out = resolve_path(cfg.paths.raw_results) / exp_name(cfg) / model / cond_name / f"{data_set}_N{N}_shard_{shard}.jsonl"
     done = done_ids(out)
     todo = [i for i in mine if i.instance_id not in done]
     if not todo:
-        print(f"{cond_name} N={N} shard {shard}: complete ({len(done)})")
+        print(f"{cond_name} {data_set} N={N} shard {shard}: complete ({len(done)})")
         return out
     sels = run_condition(cond_name, ctx, store, todo, all_insts)
     gp = GenParams(temperature=float(cfg.generation.temperature), max_tokens=int(cfg.generation.max_tokens),
@@ -98,7 +99,7 @@ def run_task(cfg: Any, cond_name: str, shard: int, N: int, nsh: int, ctx: GateCo
             comps = llm.generate(prompts, gp)
             dt = (time.time() - t0) * 1000.0 / max(len(batch), 1)
             for (inst, r, ptok, truncated, wtok, tin), c in zip(metas, comps):
-                rec = base_record(cfg, inst, cond_name, model, seed=int(cfg.generation.seed))
+                rec = base_record(cfg, inst, cond_name, model, seed=int(cfg.generation.seed), data_set=data_set)
                 rec.update({
                     "selected_ids": list(r.selection.selected_ids), "n_selected": len(r.selection.selected_ids),
                     "pref_tokens": int(ptok), "total_input_tokens": int(tin),
@@ -110,7 +111,7 @@ def run_task(cfg: Any, cond_name: str, shard: int, N: int, nsh: int, ctx: GateCo
                     "temperature": gp.temperature, "query": inst.query,
                 })
                 app.write(rec)
-    print(f"{cond_name} N={N} shard {shard}: wrote {len(todo)} -> {out}")
+    print(f"{cond_name} {data_set} N={N} shard {shard}: wrote {len(todo)} -> {out}")
     return out
 
 
@@ -134,8 +135,8 @@ def main(argv: Sequence[str] | None = None) -> None:
     counter = build_counter(cfg)
     store = load_store(cfg, llm=llm)
     t0 = time.time()
-    for cond_name, shard, N in chosen:
-        run_task(cfg, cond_name, shard, N, nsh, ctx, counter, store, llm)
+    for data_set, cond_name, shard, N in chosen:
+        run_task(cfg, data_set, cond_name, shard, N, nsh, ctx, counter, store, llm)
     print(f"done {len(chosen)} task(s) in {time.time() - t0:.1f}s")
 
 

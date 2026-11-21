@@ -1,6 +1,6 @@
 name: E3
 kind: generation
-data_set: sub500
+data_sets: [sub500, xtopic_sub500]
 n_levels: [1, 5, 10, 25, 50, 100]
 models: [qwen7b]
 conditions: [B2_all, B3_sim_k5, S_best, UB_oracle, B1_full]

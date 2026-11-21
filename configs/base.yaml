@@ -31,7 +31,15 @@ gate:
   k_max: 10
   rerank_top: 20
   tau_quantiles: 101
-  k_grid: [1, 2, 3, 5, 7, 10]
+  k_grid: [1, 2, 3, 5, 7, 10, 15, 20]
+  tune_objective: recall_floor   # recall_floor | f1   (D-032, chosen 2026-11-21)
+  recall_floor: 0.95             # strictest setting with pooled dev recall(G) >= this
+cross_topic:                     # D-033: cross-topic query split
+  generator: judge_llama70b_awq  # different family from the Qwen scope writer
+  verifier: judge_qwen72b_awq
+  per_pref: 3
+  max_tokens: 400
+  audit_n: 150
 s3_train: {epochs: 1, lr: 2.0e-5, batch_size: 32, hard_neg: 3, rand_neg: 3, max_train_pairs: null}
 tokens:
   counter: hf            # hf (backbone tokenizer, chat template) | whitespace | path/to/tokenizer.json

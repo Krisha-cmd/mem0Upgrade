@@ -66,12 +66,15 @@ def run_condition(cond_name: str, ctx: GateContext, store: PreferenceStore,
         param: dict[str, Any] = {}
         if gate.tunable:
             dev = [scored[i.instance_id] for i in tune_insts if i.fold != f]
+            obj, floor = str(cfg.gate.tune_objective), float(cfg.gate.recall_floor)
             if gate.tunable == "tau":
-                tau, f1 = tune_tau(gate, dev, int(cfg.gate.tau_quantiles))
-                param = {"tau": tau, "dev_f1": f1, "n_dev": len(dev)}
+                tau, d = tune_tau(gate, dev, int(cfg.gate.tau_quantiles), obj, floor)
+                param = {"tau": tau}
             else:
-                k, f1 = tune_k(gate, dev, list(cfg.gate.k_grid))
-                param = {"k": k, "dev_f1": f1, "n_dev": len(dev)}
+                k, d = tune_k(gate, dev, list(cfg.gate.k_grid), obj, floor)
+                param = {"k": k}
+            param.update({"objective": obj, "dev_recall": d["recall"], "dev_precision": d["precision"],
+                          "dev_f1": d["f1"], "floor_met": d["floor_met"], "n_dev": len(dev)})
         tuning_log[str(f)] = param
         for i in test:
             s = scored[i.instance_id]

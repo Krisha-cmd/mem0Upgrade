@@ -20,7 +20,7 @@ from .llm.engine import build_llm
 from .llm.tokens import build_counter, pref_token_delta
 from .memory.scope_writer import writer_name
 from .prompting import build_messages
-from .runtime import base_record, get_instances, limit_instances, load_store
+from .runtime import base_record, data_sets, get_instances, limit_instances, load_store
 from .selection import run_condition, uses_scopes
 from .utils import read_jsonl, setup_logging, write_jsonl
 
@@ -56,19 +56,23 @@ def run(cfg) -> list[Path]:
     chash = config_hash(cfg)
     model = str(cfg.model_cfg.name)
     store = load_store(cfg, llm=llm)          # writes any missing scopes first (S3 needs them)
+    for set_tag in data_sets(cfg):            # build every split first: S3 trains on xtopic items too
+        for N in my_levels:
+            get_instances(cfg, int(N), set_tag)
     _ensure_s3(cfg, list(exp.conditions))
     written: list[Path] = []
-    for N in my_levels:
-        all_insts = get_instances(cfg, int(N))
-        eval_insts = limit_instances(all_insts, cfg.run.limit, int(cfg.seed), f"E1N{N}")
+    for set_tag, N in [(s, n) for s in data_sets(cfg) for n in my_levels]:
+        all_insts = get_instances(cfg, int(N), set_tag)
+        eval_insts = limit_instances(all_insts, cfg.run.limit, int(cfg.seed), f"E1{set_tag}N{N}")
         tune_insts = all_insts if cfg.get("profile") != "local" else eval_insts
         for cname in exp.conditions:
-            out = resolve_path(cfg.paths.raw_results) / exp_name(cfg) / model / cname / f"shard_N{N}.jsonl"
+            out = (resolve_path(cfg.paths.raw_results) / exp_name(cfg) / model / cname
+                   / f"shard_{set_tag}_N{N}.jsonl")
             if _cell_complete(out, len(eval_insts), chash):
-                print(f"skip complete cell {cname} N={N}")
+                print(f"skip complete cell {cname} {set_tag} N={N}")
                 continue
             cond = condition_cfg(cname)
-            tun = resolve_path(cfg.paths.tuning) / model / cname / f"N{N}.json"
+            tun = resolve_path(cfg.paths.tuning) / model / cname / f"{set_tag}_N{N}.json"
             res = run_condition(cname, ctx, store, eval_insts, tune_insts, tun)
             rows = []
             for inst in eval_insts:
@@ -77,7 +81,7 @@ def run(cfg) -> list[Path]:
                 texts = [recs[i].text for i in r.selection.selected_ids]
                 with_b = build_messages(cfg, inst.query, texts)
                 wtok = sum(recs[p].write_tokens for p in inst.pref_ids) if uses_scopes(cond) else 0
-                rec = base_record(cfg, inst, cname, model)
+                rec = base_record(cfg, inst, cname, model, data_set=set_tag)
                 rec.update({
                     "selected_ids": list(r.selection.selected_ids),
                     "n_selected": len(r.selection.selected_ids),
@@ -95,7 +99,7 @@ def run(cfg) -> list[Path]:
             write_jsonl(tmp, rows)
             os.replace(tmp, out)
             written.append(out)
-            print(f"{cname:16s} N={N:<3d} n={len(rows)} -> {out}")
+            print(f"{cname:16s} {set_tag:7s} N={N:<3d} n={len(rows)} -> {out}")
     return written
 
 

@@ -41,6 +41,7 @@ class Instance(BaseModel):
     form: str = "explicit"
     query: str
     query_topic: str
+    home_topic: Optional[str] = None   # topic of the target preference (xtopic: != query_topic)
     query_item_id: str
     target_id: Optional[str]
     global_id: Optional[str] = None

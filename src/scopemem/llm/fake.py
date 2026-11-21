@@ -68,6 +68,12 @@ class FakeLLM:
             return self._scope(full)
         if "LLM_SELECT_V1" in full:
             return self._select(full)
+        if "CROSS_TOPIC_GEN_V1" in full:
+            return self._xgen(full)
+        if "CROSS_TOPIC_VERIFY_V1" in full:
+            hx = _h(self.name, full)
+            applies = "yes" if int(hx[:2], 16) % 5 else "no"      # ~80% kept
+            return json.dumps({"applies": applies, "mentions": "no", "natural": "yes", "reason": "fake"})
         if "<answer>" in full and "Examine" in full:
             return self._judge(full)
         if "FALSE_APPLICATION_V1" in full:
@@ -99,6 +105,17 @@ class FakeLLM:
         q = set(content_words(query))
         picked = [int(i) for i, t in items if q & set(content_words(t))]
         return json.dumps(picked[:5])
+
+    def _xgen(self, full: str) -> str:
+        topics = re.findall(r"^- (\S+)$", full, re.M)
+        n = int(re.search(r"Write (\d+) realistic", full).group(1))
+        hx = _h(self.name, full)
+        start = int(hx[:4], 16) % max(len(topics), 1)
+        picked = [topics[(start + 3 * j) % len(topics)] for j in range(n)] if topics else []
+        nouns = ["weekend plan", "gift idea", "evening routine", "budget", "checklist", "schedule"]
+        return json.dumps([{"topic": t, "request": f"Help me make a {nouns[(start + j) % len(nouns)]} "
+                                                    f"related to {t.split('_')[-1]}.", "why": "fake"}
+                           for j, t in enumerate(dict.fromkeys(picked))])
 
     def _judge(self, full: str) -> str:
         hx = _h(self.name, full)

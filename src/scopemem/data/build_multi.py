@@ -16,6 +16,7 @@ import argparse
 import json
 import random
 from collections import Counter, defaultdict
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable, Sequence
 
@@ -90,18 +91,44 @@ def select_targets(items: Sequence[PrefItem], n_pos: int | None, seed: int) -> l
     return sorted(chosen, key=lambda it: (it.topic, int(it.id.split("/")[1])))
 
 
+@dataclass(frozen=True)
+class Target:
+    """One query with its applicable preference. For PrefEval, home_topic == query_topic."""
+
+    query: str
+    query_topic: str
+    home_topic: str
+    item_id: str
+    pref_id: str
+
+
 def build_instances(items: Sequence[PrefItem], filler: Sequence[Sequence[tuple[str, str]]],
                     globals_: Sequence[Preference], N: int, *, n_pos: int | None = None,
                     null_frac: float = 0.2, global_prob: float = 0.3, filler_per_pref: int = 3,
                     folds: dict[str, int], seed: int = 13, form: str = "explicit",
-                    set_tag: str = "full") -> list[Instance]:
+                    set_tag: str = "full", xtopic_items: Sequence[dict] | None = None) -> list[Instance]:
+    """PrefEval targets (default) or cross-topic targets (``xtopic_items``, primary role only).
+
+    Distractors and null preference sets exclude both the query topic and the target's home topic.
+    """
     pool = _dedup_pool(items_to_prefs(items))
-    by_topic_items: dict[str, list[PrefItem]] = defaultdict(list)
-    for it in items:
-        by_topic_items[it.topic].append(it)
-    topics = sorted(by_topic_items)
     flat_filler = [(c, e) for c, conv in enumerate(filler) for e in range(len(conv))]
-    targets = select_targets(items, n_pos, seed)
+    if xtopic_items is None:
+        chosen = select_targets(items, n_pos, seed)
+        targets = [Target(t.question, t.topic, t.topic, t.id, t.id) for t in chosen]
+        null_src = [Target(t.question, t.topic, t.topic, t.id, t.id) for t in items]
+    else:
+        prim = [x for x in xtopic_items if x["role"] == "primary"]
+        targets = [Target(x["request"], x["query_topic"], x["home_topic"], x["id"], x["pref_id"]) for x in prim]
+        if n_pos is not None and n_pos < len(targets):
+            rng0 = random.Random(derive_seed(seed, "xtargets", n_pos))
+            keep = set(rng0.sample(range(len(targets)), n_pos))
+            targets = [t for i, t in enumerate(targets) if i in keep]
+        null_src = list(targets)
+    by_qtopic: dict[str, list[Target]] = defaultdict(list)
+    for t in null_src:
+        by_qtopic[t.query_topic].append(t)
+    topics = sorted(by_qtopic)
     n_null = round(len(targets) * null_frac / (1.0 - null_frac))
     out: list[Instance] = []
 
@@ -119,9 +146,9 @@ def build_instances(items: Sequence[PrefItem], filler: Sequence[Sequence[tuple[s
                 segs.append(HistorySeg(t="f", c=c, e=e))
         return segs
 
-    def distractors(exclude_topic: str, key: str) -> list[Preference]:
+    def distractors(exclude: set[str], key: str) -> list[Preference]:
         rng = random.Random(derive_seed(seed, "distr", form, set_tag, key))
-        cand = [p for p in pool if p.topic != exclude_topic]
+        cand = [p for p in pool if p.topic not in exclude]
         rng.shuffle(cand)
         return cand
 
@@ -131,14 +158,14 @@ def build_instances(items: Sequence[PrefItem], filler: Sequence[Sequence[tuple[s
         g = rng.choice(globals_) if (globals_ and rng.random() < global_prob) else None
         use_g = g is not None and N >= 2
         n_d = N - 1 - (1 if use_g else 0)
-        d = distractors(t.topic, key)[:n_d]
-        pref_ids = [t.id] + [p.id for p in d] + ([g.id] if use_g and g else [])
-        gold = [t.id] + ([g.id] if use_g and g else [])
+        d = distractors({t.query_topic, t.home_topic}, key)[:n_d]
+        pref_ids = [t.pref_id] + [p.id for p in d] + ([g.id] if use_g and g else [])
+        gold = [t.pref_id] + ([g.id] if use_g and g else [])
         out.append(Instance(
             instance_id=f"{form}-{set_tag}-N{N}-p{j:04d}", N=N, kind="positive", form=form,
-            query=t.question, query_topic=t.topic, query_item_id=t.id, target_id=t.id,
-            global_id=g.id if use_g and g else None, pref_ids=pref_ids, gold_ids=gold,
-            fold=folds[t.topic], history=history_for(pref_ids, key)))
+            query=t.query, query_topic=t.query_topic, home_topic=t.home_topic, query_item_id=t.item_id,
+            target_id=t.pref_id, global_id=g.id if use_g and g else None, pref_ids=pref_ids,
+            gold_ids=gold, fold=folds[t.home_topic], history=history_for(pref_ids, key)))
 
     topic_order = list(topics)
     random.Random(derive_seed(seed, "nulltopics", set_tag)).shuffle(topic_order)
@@ -146,13 +173,13 @@ def build_instances(items: Sequence[PrefItem], filler: Sequence[Sequence[tuple[s
         key = f"null{j}"
         rng = random.Random(derive_seed(seed, "nullq", form, set_tag, key))
         qt = topic_order[j % len(topic_order)]
-        q_item = rng.choice(by_topic_items[qt])          # with replacement (D-010)
-        d = distractors(qt, key)[:N]
+        q = rng.choice(by_qtopic[qt])                   # with replacement (D-010)
+        d = distractors({q.query_topic, q.home_topic}, key)[:N]
         pref_ids = [p.id for p in d]
         out.append(Instance(
             instance_id=f"{form}-{set_tag}-N{N}-n{j:04d}", N=N, kind="null", form=form,
-            query=q_item.question, query_topic=qt, query_item_id=q_item.id, target_id=None,
-            pref_ids=pref_ids, gold_ids=[], fold=folds[qt], history=history_for(pref_ids, key)))
+            query=q.query, query_topic=qt, home_topic=q.home_topic, query_item_id=q.item_id, target_id=None,
+            pref_ids=pref_ids, gold_ids=[], fold=folds[q.home_topic], history=history_for(pref_ids, key)))
     return out
 
 
@@ -233,14 +260,22 @@ def build_all(cfg, sets: Sequence[str] = ("full", "sub500"), n_levels: Sequence[
         (out_dir / "folds.json").write_text(json.dumps(folds, indent=1, sort_keys=True))
         for name in ("prefs.jsonl", "folds.json"):
             manifest["files"][name] = sha256_file(out_dir / name)
+    from .cross_topic import load_xtopic_items
+
     for set_tag in sets:
-        n_pos = None if set_tag == "full" else int(cfg.data.sub_n_pos)
+        n_pos = None if set_tag in ("full", "xtopic") else int(cfg.data.sub_n_pos)
+        xitems = None
+        if set_tag.startswith("xtopic"):
+            xitems = load_xtopic_items(out_dir)
+            if not xitems:
+                report["sets"][set_tag] = "skipped: no cross_topic/xtopic_items.jsonl (run scopemem.data.cross_topic)"
+                continue
         for N in levels:
             insts = build_instances(items, filler, globals_, N, n_pos=n_pos,
                                     null_frac=float(cfg.data.null_frac),
                                     global_prob=float(cfg.data.global_prob),
                                     filler_per_pref=int(cfg.data.filler_per_pref), folds=folds,
-                                    seed=int(cfg.seed), form=form, set_tag=set_tag)
+                                    seed=int(cfg.seed), form=form, set_tag=set_tag, xtopic_items=xitems)
             report["sets"].setdefault(set_tag, {})[N] = summarize(insts)
             if write:
                 fn = dataset_filename(N, set_tag, form)
@@ -258,7 +293,7 @@ def build_all(cfg, sets: Sequence[str] = ("full", "sub500"), n_levels: Sequence[
 def main(argv: Sequence[str] | None = None) -> None:
     ap = argparse.ArgumentParser(description="Build PrefEval-Multi")
     ap.add_argument("--profile", default=None)
-    ap.add_argument("--sets", nargs="+", default=["full", "sub500"])
+    ap.add_argument("--sets", nargs="+", default=["full", "sub500", "xtopic", "xtopic_sub500"])
     ap.add_argument("--n-levels", nargs="+", type=int, default=None)
     ap.add_argument("--form", default="explicit", choices=["explicit", "choice", "persona"])
     ap.add_argument("--stats-only", action="store_true")
@@ -269,6 +304,9 @@ def main(argv: Sequence[str] | None = None) -> None:
     print(f"form={rep['form']} items={rep['items']} topics={rep['topics']} "
           f"filler={rep['filler_conversations']} conversations / {rep['filler_exchanges']} exchanges")
     for set_tag, levels in rep["sets"].items():
+        if isinstance(levels, str):
+            print(f"[{set_tag}] {levels}")
+            continue
         for N, s in levels.items():
             print(f"[{set_tag:6s}] N={N:<3d} n={s['n']:<5d} pos={s['positive']:<5d} null={s['null']:<4d} "
                   f"null_share={s['null_share']:.3f} global={s['with_global']:<4d} "

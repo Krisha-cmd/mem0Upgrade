@@ -31,6 +31,23 @@ dataset at a pinned revision and writes `data/raw/raw_manifest.json` with checks
 
 - **Instances per fold** (full): 257 / 246 / 237 / 240 / 270. There are 5 folds of 4 topics each; an instance's fold is the fold of its query topic.
 
+### How easy is PrefEval-Multi for similarity retrieval? (measured 2026-11-21)
+`bge-base-en-v1.5`, full set, N=25, 1,000 positives, cosine(query, preference text):
+
+| recall@1 | recall@3 | recall@5 | recall@10 | median rank of target | target − best distractor (quartiles) |
+|---|---|---|---|---|---|
+| 0.696 | 0.909 | 0.960 | 0.991 | 1 | −0.012 / 0.044 / 0.089 |
+
+If the distractors came from the target's own topic, recall@1 would be 0.099 and recall@5 0.351. The hardest topics (recall@5 ≈ 0.90) are travel_activities, lifestyle_health and pet_ownership. **This is why the cross-topic split was added (DECISIONS D-033).**
+
+## Cross-topic split `xtopic` (built here, D-033)
+- **Pipeline:** `python -m scopemem.data.cross_topic stage=generate|verify|select|export_audit|score_audit`. Outputs go to `data/processed/cross_topic/`:
+  - `candidates__<generator>.jsonl` and `verified__<generator>__<verifier>.jsonl`;
+  - `xtopic_items.jsonl` (the `primary` and `reserve` roles) and `select_stats.json`.
+- **Instance files:** `prefeval_multi_N{n}_xtopic.jsonl` and `prefeval_multi_N{n}_xtopic_sub500.jsonl`.
+- **Size:** at most one primary request per unique preference, so at most 988 positives plus 20% nulls. The final count depends on the verifier pass rate, which will be recorded here after the cluster run.
+- **Human audit:** a blind CSV of about 150 rows. Kept-request precision and verifier κ go to `results/tables/xtopic_audit.json`.
+
 ## PersonaMem (E8)
 - **Source:** HF dataset `bowen-upenn/PersonaMem-v1`, revision `a8076d5608c93ba2a28983cd78aa99b01a163ae7`. **Licence:** MIT. v2 and v3 now exist; we use v1, the version in the paper (arXiv:2504.14225).
 - **Files:**

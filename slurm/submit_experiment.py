@@ -131,8 +131,11 @@ def n_tasks_for(stage, cfg, model: str) -> int:
     return int(a)
 
 
-def stage_kind(stage, model_cfg, judge_cfg) -> str:
+def stage_kind(stage, model_cfg, judge_cfg, cfg=None) -> str:
     k = str(stage.kind)
+    if k == "model_from":           # e.g. cross_topic.generator -> that model's slurm profile
+        mc = load_named("models", str(OmegaConf.select(cfg, str(stage.model_from))))
+        return {"gpu1": "gpu1", "gpu2": "gpu2", "cpu": "cpu"}[str(mc.slurm)]
     if k == "model":
         return {"gpu1": "gpu1", "gpu2": "gpu2", "cpu": "cpu"}[str(model_cfg.slurm)]
     if k == "judge":
@@ -155,7 +158,7 @@ def plan(exp: str, models: list[str] | None, stages: list[str] | None, after: st
         per_model = "{model}" in str(st.cmd)
         for m in (models if per_model else [None]):
             mc = load_named("models", m) if m else load_named("models", models[0])
-            kind = stage_kind(st, mc, judge_cfg)
+            kind = stage_kind(st, mc, judge_cfg, cfg)
             n = n_tasks_for(st, cfg, m or models[0])
             cmd = str(st.cmd).replace("{model}", m or models[0]).replace("{n_shards}", str(n))
             if profile:

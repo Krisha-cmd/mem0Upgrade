@@ -5,6 +5,7 @@ xenc: minilm_ce
 tokens: {counter: whitespace}
 exp_suffix: _local
 paths:
+  processed: data/processed_local      # fake scopes / fake cross-topic items never touch data/processed
   tuning: results/tuning_local
   cache: cache/local
   models_ft: models_ft/local

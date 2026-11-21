@@ -120,9 +120,29 @@ def test_tuning_picks_separating_threshold_and_k():
     p = _prefs(4)
     scored = [Scored(np.array([0.9, 0.2, 0.1, 0.3, 0.0], dtype=np.float32), p, frozenset({"t0/0"})),
               Scored(np.array([0.1, 0.8, 0.2, 0.25, 0.0], dtype=np.float32), p, frozenset({"t1/0"}))]
-    tau, f1 = tune_tau(g, scored, 101)
-    assert f1 == 1.0 and 0.3 < tau <= 0.8
+    tau, d = tune_tau(g, scored, 101, "f1")
+    assert d["f1"] == 1.0 and 0.3 < tau <= 0.8
     gk = SimTopKGate(C(id="B3", gate="sim_topk", k="tune"), GC, None)
-    k, f1k = tune_k(gk, scored, [1, 2, 3])
-    assert k == 1 and f1k == 1.0
+    k, dk = tune_k(gk, scored, [1, 2, 3], "f1")
+    assert k == 1 and dk["f1"] == 1.0
     assert prf([["a"], []], [frozenset({"a"}), frozenset()]) == (1.0, 1.0, 1.0)
+
+
+def test_recall_floor_picks_strictest_setting_meeting_floor():
+    g = _scope_gate("scope_embed", tau="tune", always=False)
+    p = _prefs(4)
+    # gold scores 0.9, 0.6, 0.3, 0.2; distractor scores up to 0.5
+    rows = [(0.9, 0.5), (0.6, 0.4), (0.3, 0.45), (0.2, 0.1)]
+    scored = [Scored(np.array([gs, ds, 0.0, 0.0, 0.0], dtype=np.float32), p, frozenset({"t0/0"}))
+              for gs, ds in rows]
+    tau, d = tune_tau(g, scored, 101, "recall_floor", 0.75)     # need 3 of 4 gold -> tau <= 0.3
+    assert d["floor_met"] and d["recall"] >= 0.75 and 0.2 < tau <= 0.3
+    tau1, d1 = tune_tau(g, scored, 101, "recall_floor", 1.0)    # need all 4 -> tau <= 0.2
+    assert d1["recall"] == 1.0 and tau1 <= 0.2 and tau1 < tau
+    gk = SimTopKGate(C(id="B3", gate="sim_topk", k="tune"), GC, None)
+    k, dk = tune_k(gk, scored, [1, 2, 3], "recall_floor", 1.0)
+    assert k == 2 and dk["floor_met"]                           # gold is never below rank 2
+    # unreachable floor: falls back to the max-recall setting and records the miss
+    empty = [Scored(np.array([0.0, 0.9, 0.0, 0.0, 0.0], dtype=np.float32), p, frozenset({"global/x"}))]
+    _, de = tune_tau(g, empty, 11, "recall_floor", 0.95)
+    assert de["floor_met"] is False

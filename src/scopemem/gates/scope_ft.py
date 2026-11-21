@@ -37,7 +37,10 @@ def ft_model_dir(cfg, writer_name: str, fold: int) -> Path:
 def build_training_pairs(items, store: PreferenceStore, folds: dict[str, int], fold: int, embedder,
                          fields: Sequence[str], seed: int, hard_neg: int = 3, rand_neg: int = 3,
                          global_ids: Sequence[str] = (), global_prob: float = 0.3,
-                         max_pairs: int | None = None) -> list[tuple[str, str, float]]:
+                         max_pairs: int | None = None, xtopic_items: Sequence[dict] = ()
+                         ) -> list[tuple[str, str, float]]:
+    """Queries come from PrefEval items of training topics and, if available, cross-topic items
+    whose home AND query topics are both training topics (primary + reserve; D-033)."""
     train_items = [it for it in items if folds[it.topic] != fold]
     train_ids = [it.id for it in train_items]
     recs = {pid: store.record(pid) for pid in train_ids}
@@ -46,20 +49,25 @@ def build_training_pairs(items, store: PreferenceStore, folds: dict[str, int], f
     ids = np.array(train_ids)
     topics = np.array([it.topic for it in train_items])
     pv = embedder.encode([texts[i] for i in train_ids])
-    qv = embedder.encode([it.question for it in train_items], is_query=True)
+    # (query, target pref id, topics whose prefs may not be negatives)
+    queries = [(it.question, it.id, {it.topic}) for it in train_items]
+    queries += [(x["request"], x["pref_id"], {x["home_topic"], x["query_topic"]}) for x in xtopic_items
+                if folds[x["home_topic"]] != fold and folds[x["query_topic"]] != fold and x["pref_id"] in texts]
+    qv = embedder.encode([q for q, _, _ in queries], is_query=True)
     pairs: list[tuple[str, str, float]] = []
-    for k, it in enumerate(train_items):
-        pairs.append((it.question, texts[it.id], 1.0))
-        other = np.where(topics != it.topic)[0]
+    for k, (q, pid, excl) in enumerate(queries):
+        pairs.append((q, texts[pid], 1.0))
+        other = np.where(~np.isin(topics, list(excl)))[0]
         sims = pv[other] @ qv[k]
         hard = other[np.argsort(-sims, kind="stable")[:hard_neg]]
-        rest = [j for j in other.tolist() if j not in set(hard.tolist())]
+        hs = set(hard.tolist())
+        rest = [j for j in other.tolist() if j not in hs]
         rnd = rng.sample(rest, min(rand_neg, len(rest)))
         for j in list(hard) + rnd:
-            pairs.append((it.question, texts[str(ids[j])], 0.0))
+            pairs.append((q, texts[str(ids[j])], 0.0))
         if global_ids and rng.random() < global_prob:
             g = store.record(rng.choice(list(global_ids)))
-            pairs.append((it.question, g.joined(fields), 1.0))
+            pairs.append((q, g.joined(fields), 1.0))
     rng.shuffle(pairs)
     if max_pairs:
         pairs = pairs[:max_pairs]
@@ -104,6 +112,7 @@ def train_cross_encoder(base_model: str, pairs: Sequence[tuple[str, str, float]]
 def train_fold(cfg, fold: int, writer_name: str | None = None) -> Path:
     from ..config import condition_cfg
     from ..data.build_multi import load_globals, load_pref_table
+    from ..data.cross_topic import load_xtopic_items
     from ..data.prefeval import load_items
     from ..embed import build_embedder
     from ..memory.scope_writer import scopes_path, writer_name as _writer_name
@@ -120,7 +129,8 @@ def train_fold(cfg, fold: int, writer_name: str | None = None) -> Path:
     st = cfg.s3_train
     pairs = build_training_pairs(items, store, folds, fold, emb, fields, int(cfg.seed),
                                  int(st.hard_neg), int(st.rand_neg), [g.id for g in load_globals()],
-                                 float(cfg.data.global_prob), st.get("max_train_pairs"))
+                                 float(cfg.data.global_prob), st.get("max_train_pairs"),
+                                 load_xtopic_items(processed))
     out = ft_model_dir(cfg, writer_name, fold)
     if cfg.xenc_cfg.type == "hash":     # smoke/tests: nothing to train
         out.mkdir(parents=True, exist_ok=True)

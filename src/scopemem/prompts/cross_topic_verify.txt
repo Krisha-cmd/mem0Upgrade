@@ -1,0 +1,17 @@
+# Cross-topic request verifier, version CROSS_TOPIC_VERIFY_V1 (D-033).
+### END HEADER ###
+[prompt-id: CROSS_TOPIC_VERIFY_V1]
+You will check one user request against one stored user preference. Be strict.
+
+User preference: "{preference}"
+User request: "{request}"
+
+Answer three questions:
+- applies: Would a good answer to the request need to take the preference into account, so that an
+  answer ignoring it would conflict with the preference or be much less useful to this user? A loose or
+  merely possible connection is "no".
+- mentions: Does the request mention the preference, its subject, or words that give it away?
+- natural: Is the request a natural, self-contained request a real user could send?
+
+Return ONLY a JSON object, with no other text:
+{{"applies": "yes" or "no", "mentions": "yes" or "no", "natural": "yes" or "no", "reason": "<one short sentence>"}}

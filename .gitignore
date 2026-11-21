@@ -30,3 +30,5 @@ results/tuning_local/
 results/tables/*_local*
 results/figures/*_local*
 results/tables/*_smoke*
+data/processed_local/
+results/annotation/

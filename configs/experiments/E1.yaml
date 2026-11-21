@@ -1,13 +1,17 @@
 # Retrieval only: does similarity miss applicable preferences? All items at every N.
+# Two splits (D-033): `full` = PrefEval same-topic queries; `xtopic` = cross-topic requests.
 name: E1
 kind: retrieval
-data_set: full
+data_sets: [full, xtopic]
 n_levels: [1, 5, 10, 25, 50, 100]
 models: [qwen7b]           # scope writer + B5 selector + tokenizer
 conditions: [B3_sim_k1, B3_sim_k3, B3_sim_k5, B3_sim_k10, B4_sim_rerank, B5_llm_select, S1_scope_embed, S2_scope_xenc, S3_scope_ft, B2_all, UB_oracle]
 stages:
-  - {name: build,     kind: cpu,   array: 1,        time: "01:00:00", cmd: "python -m scopemem.data.build_multi"}
-  - {name: scopes,    kind: model, array: 1,        time: "01:00:00", cmd: "python -m scopemem.memory.scope_writer experiment=E1 model={model}"}
-  - {name: s3_train,  kind: gpu1,  array: folds,    time: "01:30:00", cmd: "python -m scopemem.gates.scope_ft experiment=E1 model={model} fold=$TASK"}
-  - {name: retrieval, kind: model, array: n_levels, time: "03:00:00", cmd: "python -m scopemem.retrieval experiment=E1 model={model} run.shard=$TASK run.num_shards={n_shards}"}
-  - {name: aggregate, kind: cpu,   array: 1,        time: "00:30:00", cmd: "python -m scopemem.aggregate experiment=E1"}
+  - {name: build,       kind: cpu,   array: 1, time: "01:00:00", cmd: "python -m scopemem.data.build_multi --sets full sub500"}
+  - {name: scopes,      kind: model, array: 1, time: "01:00:00", cmd: "python -m scopemem.memory.scope_writer experiment=E1 model={model}"}
+  - {name: xt_generate, kind: model_from, model_from: cross_topic.generator, array: 1, time: "03:00:00", cmd: "python -m scopemem.data.cross_topic stage=generate"}
+  - {name: xt_verify,   kind: model_from, model_from: cross_topic.verifier,  array: 1, time: "02:00:00", cmd: "python -m scopemem.data.cross_topic stage=verify"}
+  - {name: xt_build,    kind: cpu,   array: 1, time: "00:30:00", cmd: "python -m scopemem.data.cross_topic stage=select && python -m scopemem.data.cross_topic stage=export_audit && python -m scopemem.data.build_multi --sets xtopic xtopic_sub500"}
+  - {name: s3_train,    kind: gpu1,  array: folds,    time: "01:30:00", cmd: "python -m scopemem.gates.scope_ft experiment=E1 model={model} fold=$TASK"}
+  - {name: retrieval,   kind: model, array: n_levels, time: "04:00:00", cmd: "python -m scopemem.retrieval experiment=E1 model={model} run.shard=$TASK run.num_shards={n_shards}"}
+  - {name: aggregate,   kind: cpu,   array: 1,        time: "00:30:00", cmd: "python -m scopemem.aggregate experiment=E1"}

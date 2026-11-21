@@ -1,7 +1,7 @@
 # Main result at N=25. S_best is fixed in docs/PROTOCOL.md before this runs.
 name: E2
 kind: generation
-data_set: full
+data_sets: [full, xtopic]          # D-033: PrefEval (same-topic) + cross-topic split
 n_levels: [25]
 models: [qwen7b, llama8b, qwen32b]
 sampled_seeds: {model: qwen7b, seeds: [1, 2, 3], temperature: 0.7}
