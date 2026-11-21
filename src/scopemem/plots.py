@@ -58,8 +58,9 @@ def _ls(c: str) -> str:
 
 
 def recall_vs_n(df: pd.DataFrame, out: Path, conditions: Sequence[str], title: str) -> None:
-    fig, ax = plt.subplots(figsize=(6.4, 3.8), facecolor=SURFACE)
+    fig, ax = plt.subplots(figsize=(7.2, 3.8), facecolor=SURFACE)
     _style(ax)
+    ends = []
     for c in conditions:
         d = df[df.condition == c].sort_values("N")
         if d.empty:
@@ -68,8 +69,16 @@ def recall_vs_n(df: pd.DataFrame, out: Path, conditions: Sequence[str], title: s
         ax.plot(d.N, d.recall_target, _ls(c), color=_color(c), lw=2, marker=MARKERS.get(c, "o"), ms=5,
                 alpha=SIM_ALPHA.get(c, 1.0), label=LABELS.get(c, c))
         last = d.iloc[-1]
-        ax.annotate(LABELS.get(c, c), (last.N, last.recall_target), xytext=(4, 0),
-                    textcoords="offset points", fontsize=6.5, color=INK2, va="center")
+        ends.append([float(last.recall_target), float(last.N), LABELS.get(c, c)])
+    # direct end labels, nudged apart vertically so converging lines stay legible
+    ends.sort()
+    gap = 0.05
+    for i in range(1, len(ends)):
+        ends[i][0] = max(ends[i][0], ends[i - 1][0] + gap)
+    for y, x, lab in ends:
+        ax.annotate(lab, (x, y), xytext=(8, 0), textcoords="offset points", fontsize=6.5, color=INK2,
+                    va="center", annotation_clip=False)
+    fig.subplots_adjust(right=0.78)
     ax.set_xscale("log")
     ns = sorted(df.N.unique())
     ax.set_xticks(ns)
@@ -79,7 +88,7 @@ def recall_vs_n(df: pd.DataFrame, out: Path, conditions: Sequence[str], title: s
     ax.set_ylim(0, 1.02)
     ax.set_title(title, color=INK, fontsize=10, loc="left")
     ax.legend(fontsize=7, frameon=False, loc="lower left", ncol=2)
-    fig.tight_layout()
+    fig.tight_layout(rect=(0, 0, 0.82, 1))
     fig.savefig(out)
     plt.close(fig)
 
