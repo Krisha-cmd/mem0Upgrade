@@ -46,6 +46,37 @@ class LLM(Protocol):
     def generate(self, prompts: Sequence[Messages], params: GenParams) -> list[Completion]: ...
 
 
+def resolve_local_model(hf_id: str) -> str:
+    """Resolve an HF id to its local snapshot dir and check it is complete before vLLM loads it.
+
+    Jobs run with HF_HUB_OFFLINE=1, so a partial download only surfaces deep inside vLLM as an
+    unhelpful tokenizer error. This fails early with the path and what is actually on disk.
+    A local directory is returned unchanged.
+    """
+    from pathlib import Path
+
+    if Path(hf_id).is_dir():
+        return hf_id
+    from huggingface_hub import snapshot_download
+
+    hf_home = os.environ.get("HF_HOME", "<unset: ~/.cache/huggingface>")
+    try:
+        path = Path(snapshot_download(hf_id, local_files_only=True))
+    except Exception as e:  # noqa: BLE001
+        raise SystemExit(f"{hf_id}: not found in the local HF cache (HF_HOME={hf_home}): {e}. "
+                         f"Run scripts/download_models.py on the login node with the same HF_HOME.") from e
+    present = sorted(p.name for p in path.iterdir())
+    broken = sorted(p.name for p in path.iterdir() if p.is_symlink() and not p.exists())
+    has_tok = any((path / f).exists() for f in ["tokenizer.json", "vocab.json", "tokenizer.model"])
+    has_w = any(path.glob("*.safetensors"))
+    print(f"[engine] {hf_id} -> {path} (HF_HOME={hf_home})\n[engine] files: {present}", flush=True)
+    if broken or not has_tok or not has_w or not (path / "config.json").exists():
+        raise SystemExit(f"{hf_id}: incomplete snapshot at {path}. broken symlinks={broken}, "
+                         f"tokenizer={'ok' if has_tok else 'MISSING'}, weights={'ok' if has_w else 'MISSING'}. "
+                         f"Delete {path.parents[1]} and re-run scripts/download_models.py with HF_HOME={hf_home}.")
+    return str(path)
+
+
 class VLLMEngine:
     """Offline vLLM engine. Import is deferred so CPU-only installs never touch vllm."""
 
@@ -54,7 +85,7 @@ class VLLMEngine:
 
         self.name = model_cfg.name
         kwargs: dict[str, Any] = dict(
-            model=model_cfg.hf_id,
+            model=resolve_local_model(str(model_cfg.hf_id)),
             tensor_parallel_size=int(model_cfg.tensor_parallel_size),
             gpu_memory_utilization=float(model_cfg.gpu_memory_utilization),
             max_model_len=int(model_cfg.max_model_len),

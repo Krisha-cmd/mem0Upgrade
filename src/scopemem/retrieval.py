@@ -64,7 +64,7 @@ def run(cfg) -> list[Path]:
     for set_tag, N in [(s, n) for s in data_sets(cfg) for n in my_levels]:
         all_insts = get_instances(cfg, int(N), set_tag)
         eval_insts = limit_instances(all_insts, cfg.run.limit, int(cfg.seed), f"E1{set_tag}N{N}")
-        tune_insts = all_insts if cfg.get("profile") != "local" else eval_insts
+        tune_insts = eval_insts if cfg.get("profile") in ("local", "demo") else all_insts
         for cname in exp.conditions:
             out = (resolve_path(cfg.paths.raw_results) / exp_name(cfg) / model / cname
                    / f"shard_{set_tag}_N{N}.jsonl")

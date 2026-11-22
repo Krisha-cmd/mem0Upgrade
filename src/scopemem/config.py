@@ -58,6 +58,9 @@ def parse_cli(argv: Iterable[str]) -> tuple[dict[str, str], list[str]]:
 def load_config(experiment: str | None = None, profile: str | None = None,
                 overrides: Iterable[str] = ()) -> DictConfig:
     cfg = _load_yaml(configs_dir() / "base.yaml")
+    # Slurm jobs get the profile from the environment (set by submit_experiment.py --profile), so it
+    # reaches every command in a stage, including `a && b` chains and argparse-based entry points.
+    profile = profile or os.environ.get("SCOPEMEM_PROFILE") or None
     if experiment:
         exp = load_named("experiments", experiment)
         cfg = OmegaConf.merge(cfg, {"experiment": exp})

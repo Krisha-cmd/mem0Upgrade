@@ -1,0 +1,22 @@
+# Cluster preflight ("demo") run: the REAL pipeline (real models via vLLM, real Slurm templates,
+# real stage graph and dependencies) on a small slice of the data, so every stage, model load and
+# GPU layout is exercised in well under an hour of compute. Outputs are fully separated from real
+# runs (exp suffix _demo + own paths). Results are NOT reportable.
+#
+#   python scripts/preflight.py E1                                   # login-node checks first
+#   python slurm/submit_experiment.py E1 --profile demo --max-time 01:00:00
+#   python scripts/preflight.py E1 --check-demo                      # after it finishes
+llm_backend: vllm
+tokens: {counter: hf}
+exp_suffix: _demo
+paths:
+  processed: data/processed_demo
+  tuning: results/tuning_demo
+  cache: cache/demo
+  models_ft: models_ft/demo
+  tables: results/tables_demo
+  figures: results/figures_demo
+  annotation: results/annotation_demo
+run: {limit: 100}                       # instances per (set, N) in retrieval / generation
+cross_topic: {limit_per_topic: 3, audit_n: 20}   # 3 prefs x 20 topics -> ~180 candidate requests
+s3_train: {max_train_pairs: 2000}

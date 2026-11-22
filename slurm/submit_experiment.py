@@ -49,8 +49,11 @@ def _clamp_time(t: str, max_t: str) -> str:
 
 
 class Submitter:
-    def __init__(self, cluster, dry_run: bool, wait: bool, cmd_dir: Path):
+    def __init__(self, cluster, dry_run: bool, wait: bool, cmd_dir: Path, profile: str | None = None,
+                 max_time: str | None = None):
         self.c = cluster
+        self.profile = profile
+        self.max_time = max_time
         self.dry = dry_run
         self.wait = wait
         self.cmd_dir = cmd_dir
@@ -84,7 +87,7 @@ class Submitter:
         limits = self.c.partitions[part]
         args = ["sbatch", "--parsable", f"--job-name=sm-{name}", f"--partition={part}",
                 f"--cpus-per-task={prof.cpus}", f"--mem={prof.mem}",
-                f"--time={_clamp_time(time_s, str(limits.max_time))}"]
+                f"--time={_clamp_time(_clamp_time(time_s, self.max_time) if self.max_time else time_s, str(limits.max_time))}"]
         if self.c.qos_mode == "partition":
             args.append(f"--qos={part}")
         args += self.gres(int(prof.gpus))
@@ -95,7 +98,10 @@ class Submitter:
         if dep:
             args.append("--dependency=" + ",".join(dep))
         cmd_file = self.cmd_dir / f"{name}.cmd"
-        args.append(f"--export=ALL,SM_CMD_FILE={cmd_file}")
+        # The profile travels as an env var (read by config.load_config), not as a CLI suffix: a suffix
+        # only reaches the last command of an `a && b` stage and is swallowed by argparse nargs options.
+        export = f"--export=ALL,SM_CMD_FILE={cmd_file}" + (f",SCOPEMEM_PROFILE={self.profile}" if self.profile else "")
+        args.append(export)
         args.append(TEMPLATES[kind])
         line = " ".join(args)
         self.lines.append(line)
@@ -161,8 +167,6 @@ def plan(exp: str, models: list[str] | None, stages: list[str] | None, after: st
             kind = stage_kind(st, mc, judge_cfg, cfg)
             n = n_tasks_for(st, cfg, m or models[0])
             cmd = str(st.cmd).replace("{model}", m or models[0]).replace("{n_shards}", str(n))
-            if profile:
-                cmd += f" profile={profile}"
             deps_ok = [d for d in ([per_model_last.get(m)] if m else []) + [last_once] if d]
             if not per_model:        # once-stage depends on every model chain so far
                 deps_ok += [d for d in per_model_last.values() if d]
@@ -188,18 +192,20 @@ def main(argv=None) -> None:
     ap.add_argument("--stages", default=None)
     ap.add_argument("--after", default=None, help="job id that the first stage must wait for")
     ap.add_argument("--profile", default=None)
+    ap.add_argument("--max-time", default=None, help="cap every stage's --time (e.g. 01:00:00 for the demo)")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--no-wait", action="store_true")
     a = ap.parse_args(argv)
     cluster = OmegaConf.load(ROOT / "configs" / "cluster" / "csis.yaml")
     ts = time.strftime("%Y%m%d-%H%M%S")
-    sub = Submitter(cluster, a.dry_run, not a.no_wait, ROOT / "results" / "jobs" / "cmds" / f"{a.experiment}_{ts}")
+    tag = f"{a.experiment}_{a.profile}_{ts}" if a.profile else f"{a.experiment}_{ts}"
+    sub = Submitter(cluster, a.dry_run, not a.no_wait, ROOT / "results" / "jobs" / "cmds" / tag, a.profile, a.max_time)
     (ROOT / "logs").mkdir(exist_ok=True)
     jobs = plan(a.experiment, a.models.split(",") if a.models else None,
                 a.stages.split(",") if a.stages else None, a.after, sub, a.profile)
     print(json.dumps(jobs, indent=1))
     if not a.dry_run:
-        out = ROOT / "results" / "jobs" / f"{a.experiment}_{ts}.json"
+        out = ROOT / "results" / "jobs" / f"{tag}.json"
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(json.dumps({"jobs": jobs, "sbatch": sub.lines}, indent=1))
         print(f"wrote {out}")

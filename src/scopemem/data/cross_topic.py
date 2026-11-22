@@ -85,8 +85,8 @@ def _paths(cfg) -> dict[str, Path]:
     g, v = _model_name(cfg, "generator"), _model_name(cfg, "verifier")
     return {"dir": d, "cand": d / f"candidates__{g}.jsonl", "ver": d / f"verified__{g}__{v}.jsonl",
             "items": d / "xtopic_items.jsonl",
-            "audit": resolve_path("results/annotation") / "xtopic_audit.csv",
-            "key": resolve_path("results/annotation") / "xtopic_audit_key.json"}
+            "audit": resolve_path(cfg.paths.get("annotation", "results/annotation")) / "xtopic_audit.csv",
+            "key": resolve_path(cfg.paths.get("annotation", "results/annotation")) / "xtopic_audit_key.json"}
 
 
 def _model_name(cfg, role: str) -> str:
@@ -123,7 +123,17 @@ def unique_prefs(cfg) -> list[Any]:
     from .build_multi import _dedup_pool, items_to_prefs
     from .prefeval import load_items
 
-    return _dedup_pool(items_to_prefs(load_items(resolve_path(cfg.paths.prefeval_root), "explicit")))
+    prefs = _dedup_pool(items_to_prefs(load_items(resolve_path(cfg.paths.prefeval_root), "explicit")))
+    cap = cfg.cross_topic.get("limit_per_topic")
+    if cap:                                   # demo/preflight: first `cap` prefs of every topic
+        seen: dict[str, int] = defaultdict(int)
+        kept = []
+        for x in prefs:
+            if seen[x.topic] < int(cap):
+                seen[x.topic] += 1
+                kept.append(x)
+        prefs = kept
+    return prefs
 
 
 def generate(cfg, llm: LLM | None = None, batch: int = 256) -> Path:

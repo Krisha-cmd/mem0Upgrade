@@ -3,7 +3,7 @@
 VENV_PY := $(firstword $(wildcard .venv/Scripts/python.exe .venv/bin/python))
 PY ?= $(if $(VENV_PY),$(VENV_PY),python)
 
-.PHONY: test smoke data data-stats scopes-fake e1-local e1-aggregate paper clean-smoke
+.PHONY: test smoke stages-local preflight data data-stats scopes-fake e1-local e1-aggregate paper clean-smoke
 
 test:
 	$(PY) -m pytest
@@ -11,6 +11,15 @@ test:
 # E0 on 10 instances, FakeLLM + hash embedder, CPU, no Slurm, no network.
 smoke:
 	$(PY) -m scopemem.run experiment=E0 profile=smoke
+
+# Every E1 Slurm stage command, in order, locally (FakeLLM, tiny fixture, ~1 min). EXP=E1 by default.
+EXP ?= E1
+stages-local:
+	$(PY) scripts/run_stages_local.py $(EXP)
+
+# Login-node checks (env, HF cache, data, models load offline, configs, Slurm plan).
+preflight:
+	$(PY) scripts/preflight.py $(EXP)
 
 # Build PrefEval-Multi from data/raw/prefeval_src (all N levels, full + sub500 sets).
 data:

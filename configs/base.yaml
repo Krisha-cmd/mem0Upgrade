@@ -10,6 +10,7 @@ paths:
   figures: results/figures
   tuning: results/tuning
   jobs: results/jobs
+  annotation: results/annotation   # xtopic human-audit sheet + key
   cache: cache
   models_ft: models_ft
 data:
