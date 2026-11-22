@@ -46,6 +46,19 @@ def quota_report() -> None:
         print("quota check failed:", e)
 
 
+def verify(path: str, repo: str) -> None:
+    """Fail loudly on an incomplete snapshot (e.g. an interrupted download): jobs run offline."""
+    p = Path(path)
+    missing = [f for f in ["config.json"] if not (p / f).exists()]
+    if not any((p / f).exists() for f in ["tokenizer.json", "vocab.json", "tokenizer.model", "vocab.txt"]):
+        missing.append("tokenizer files")
+    if not list(p.glob("*.safetensors")):
+        missing.append("*.safetensors")
+    if missing:
+        raise SystemExit(f"{repo}: incomplete snapshot at {p}, missing {missing}. Re-run this script.")
+    print(f"   ok: {p}")
+
+
 def main() -> None:
     from huggingface_hub import snapshot_download
     from huggingface_hub.errors import GatedRepoError, HfHubHTTPError
@@ -59,13 +72,13 @@ def main() -> None:
         for repo in GROUPS[g]:
             try:
                 print(f"== {repo}")
-                snapshot_download(repo, allow_patterns=ALLOW, ignore_patterns=IGNORE, token=tok)
+                verify(snapshot_download(repo, allow_patterns=ALLOW, ignore_patterns=IGNORE, token=tok), repo)
             except (GatedRepoError, HfHubHTTPError) as e:
                 fb = FALLBACK.get(repo)
                 if not fb:
                     raise
                 print(f"   cannot download {repo} ({type(e).__name__}); using fallback {fb} — LOG THIS SWAP")
-                snapshot_download(fb, allow_patterns=ALLOW, ignore_patterns=IGNORE, token=tok)
+                verify(snapshot_download(fb, allow_patterns=ALLOW, ignore_patterns=IGNORE, token=tok), fb)
                 swaps[repo] = fb
             quota_report()
     if swaps:
