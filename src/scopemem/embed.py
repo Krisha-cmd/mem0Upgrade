@@ -119,21 +119,44 @@ class HashCrossEncoder:
         return ((np.sum(a * b, axis=1) + 1.0) / 2.0).astype(np.float32)
 
 
+_GPU_CROSS: "STCrossEncoder | None" = None     # the one cross-encoder currently on the GPU
+
+
 class STCrossEncoder:
-    """sentence-transformers CrossEncoder; raw logits passed through a sigmoid -> [0, 1]."""
+    """sentence-transformers CrossEncoder; raw logits passed through a sigmoid -> [0, 1].
+
+    A retrieval job holds the base reranker plus one S3 model per fold next to vLLM, which reserves
+    most of the card. Models wait on the CPU and only the one currently scoring is on the GPU.
+    """
 
     def __init__(self, model: str, max_length: int = 512, batch_size: int = 128, device: str | None = None):
+        import torch
         from sentence_transformers import CrossEncoder
 
-        self._m = CrossEncoder(model, max_length=max_length, device=device)
+        self._device = device or ("cuda" if torch.cuda.is_available() else "cpu")
+        self._m = CrossEncoder(model, max_length=max_length, device="cpu")
         self.name = str(model)
         self.batch_size = batch_size
+
+    def _activate(self) -> None:
+        global _GPU_CROSS
+        import torch
+
+        if not str(self._device).startswith("cuda") or _GPU_CROSS is self:
+            return
+        if _GPU_CROSS is not None:
+            _GPU_CROSS._m.to("cpu")
+            _GPU_CROSS = None
+            torch.cuda.empty_cache()
+        self._m.to(self._device)
+        _GPU_CROSS = self
 
     def score(self, pairs: Sequence[tuple[str, str]]) -> np.ndarray:
         if not pairs:
             return np.zeros(0, dtype=np.float32)
         import torch
 
+        self._activate()
         # Identity => raw logits (None would apply the model's default activation, often sigmoid)
         logits = self._m.predict(list(pairs), batch_size=self.batch_size, show_progress_bar=False,
                                  convert_to_numpy=True, activation_fn=torch.nn.Identity())

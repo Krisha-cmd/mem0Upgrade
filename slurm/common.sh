@@ -2,6 +2,10 @@
 # Sourced by every ScopeMem job. Never prints secrets.
 set -eo pipefail
 cd "${SLURM_SUBMIT_DIR:-$HOME/scopemem}"
+# Slurm copies the login node's 8 GB `ulimit -v` into jobs, which breaks mmap of model weights and
+# vLLM/CUDA address-space reservations. Compute nodes have an unlimited hard limit, so lift the soft one.
+ulimit -Sv "$(ulimit -Hv)" || echo "WARNING: could not raise ulimit -v" >&2
+echo "ulimit -v: soft=$(ulimit -Sv) hard=$(ulimit -Hv)"
 type module &>/dev/null || source /etc/profile.d/modules.sh 2>/dev/null || true
 module purge
 module load miniconda
