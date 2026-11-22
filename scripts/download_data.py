@@ -29,9 +29,15 @@ def sha256(p: Path) -> str:
 def main() -> None:
     RAW.mkdir(parents=True, exist_ok=True)
     pe = RAW / "prefeval_src"
+    if pe.exists() and not (pe / ".git").exists():
+        raise SystemExit(f"{pe} exists but is not a git checkout (interrupted clone or hand-copied?). "
+                         f"Delete it (rm -rf {pe}) and re-run, or copy the full folder from another machine.")
     if not pe.exists():
         subprocess.run(["git", "clone", "https://github.com/amazon-science/PrefEval.git", str(pe)], check=True)
     subprocess.run(["git", "-C", str(pe), "checkout", "-q", PREFEVAL_SHA], check=True)
+    need = pe / "benchmark_dataset" / "filtered_inter_turns.json"
+    if not need.exists():
+        raise SystemExit(f"PrefEval checkout is incomplete: {need} is missing. Delete {pe} and re-run.")
 
     from huggingface_hub import hf_hub_download
 
