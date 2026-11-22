@@ -5,7 +5,8 @@
     python scripts/download_models.py --groups llama8b qwen32b judge2
 
 Only safetensors + tokenizer/config files are fetched (no .bin / .pth / onnx duplicates), which
-keeps the total near the section-5 budget. The HF token is read from ~/.hf_token and never printed.
+keeps the total near the section-5 budget. Exception: BAAI/bge-m3 ships no safetensors, so its
+pytorch_model.bin is fetched (dense embeddings only; sparse_linear.pt / colbert_linear.pt are unused). The HF token is read from ~/.hf_token and never printed.
 Gated Llama models fall back to the logged substitute if access is refused (section 13).
 """
 
@@ -28,6 +29,15 @@ FALLBACK = {"meta-llama/Llama-3.1-8B-Instruct": "mistralai/Mistral-7B-Instruct-v
 ALLOW = ["*.json", "*.safetensors", "*.txt", "*.model", "*.tiktoken", "tokenizer*", "*.py", "1_Pooling/*",
          "sentencepiece*"]
 IGNORE = ["original/*", "*.bin", "*.pth", "*.onnx", "onnx/*", "openvino/*", "*.h5", "*.msgpack", "*.ot"]
+BIN_ONLY = {"BAAI/bge-m3"}          # repos whose only weights are pytorch_model.bin
+
+
+def patterns(repo: str) -> dict[str, list[str]]:
+    """allow/ignore patterns for snapshot_download."""
+    if repo in BIN_ONLY:
+        return {"allow_patterns": ALLOW + ["pytorch_model.bin"],
+                "ignore_patterns": [x for x in IGNORE if x != "*.bin"]}
+    return {"allow_patterns": ALLOW, "ignore_patterns": IGNORE}
 
 
 def token() -> str | None:
@@ -52,8 +62,9 @@ def verify(path: str, repo: str) -> None:
     missing = [f for f in ["config.json"] if not (p / f).exists()]
     if not any((p / f).exists() for f in ["tokenizer.json", "vocab.json", "tokenizer.model", "vocab.txt"]):
         missing.append("tokenizer files")
-    if not list(p.glob("*.safetensors")):
-        missing.append("*.safetensors")
+    weights = "pytorch_model.bin" if repo in BIN_ONLY else "*.safetensors"
+    if not list(p.glob(weights)):
+        missing.append(weights)
     if missing:
         raise SystemExit(f"{repo}: incomplete snapshot at {p}, missing {missing}. Re-run this script.")
     print(f"   ok: {p}")
@@ -72,13 +83,13 @@ def main() -> None:
         for repo in GROUPS[g]:
             try:
                 print(f"== {repo}")
-                verify(snapshot_download(repo, allow_patterns=ALLOW, ignore_patterns=IGNORE, token=tok), repo)
+                verify(snapshot_download(repo, token=tok, **patterns(repo)), repo)
             except (GatedRepoError, HfHubHTTPError) as e:
                 fb = FALLBACK.get(repo)
                 if not fb:
                     raise
                 print(f"   cannot download {repo} ({type(e).__name__}); using fallback {fb} — LOG THIS SWAP")
-                verify(snapshot_download(fb, allow_patterns=ALLOW, ignore_patterns=IGNORE, token=tok), fb)
+                verify(snapshot_download(fb, token=tok, **patterns(fb)), fb)
                 swaps[repo] = fb
             quota_report()
     if swaps:

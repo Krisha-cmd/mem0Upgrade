@@ -136,7 +136,10 @@ def check_model(hf_id: str, role: str, llm: bool) -> None:
     files = {f.name for f in p.iterdir()}
     broken = [f.name for f in p.iterdir() if f.is_symlink() and not f.exists()]
     missing = [f for f in ["config.json"] if f not in files]
-    if not any(f.endswith(".safetensors") for f in files):
+    if hf_id == "BAAI/bge-m3":               # ships no safetensors
+        if "pytorch_model.bin" not in files:
+            missing.append("pytorch_model.bin")
+    elif not any(f.endswith(".safetensors") for f in files):
         missing.append("*.safetensors")
     if not files & {"tokenizer.json", "vocab.json", "tokenizer.model", "vocab.txt", "sentencepiece.bpe.model"}:
         missing.append("tokenizer files")
